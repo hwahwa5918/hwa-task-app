@@ -1002,6 +1002,13 @@
     var tasks = [];
     var currentTaskFilter = 'all';
 
+    // 한국어 입력기(IME) 조합 상태를 기억하는 변수들.
+    // 예: '명상하기'를 입력하고 Enter를 누를 때 마지막 글자 '기'가 따로 추가되는 문제를 막기 위해 사용해.
+    var taskInputIsComposing = false;
+    var taskEnterPendingAfterComposition = false;
+    var lastTaskAddText = '';
+    var lastTaskAddTime = 0;
+
     var celebrationMessages = [
       '🎉 해냈다! 이건 생색내도 됨',
       '👏 오늘의 흔적 하나 추가',
@@ -1015,6 +1022,7 @@
     function addTask() {
       const input = document.getElementById('taskInput');
       const text = input.value.trim();
+      const now = Date.now();
 
       if (!text) {
         showToast('✍️ 할 일을 먼저 적어줘요');
@@ -1022,8 +1030,16 @@
         return;
       }
 
+      // 아주 짧은 시간 안에 같은 내용이 두 번 들어오는 것을 막는 안전장치.
+      // 버튼 더블클릭이나 엔터 중복 입력에도 같은 할 일이 두 번 생기지 않게 해.
+      if (text === lastTaskAddText && now - lastTaskAddTime < 700) {
+        input.value = '';
+        input.focus();
+        return;
+      }
+
       const newTask = {
-        id: Date.now(),
+        id: now,
         text: text,
         done: false,
         createdAt: new Date().toISOString(),
@@ -1031,16 +1047,55 @@
       };
 
       tasks.unshift(newTask);
+      lastTaskAddText = text;
+      lastTaskAddTime = now;
       input.value = '';
       saveTasks();
       renderTaskList();
       renderHomeSummary();
       showToast('🐾 흔적 후보가 추가됐어요');
       input.focus();
+
+      // 일부 한글 입력기에서 Enter 직후 마지막 조합 글자가 input에 다시 남는 경우가 있어서 한 번 더 비워줘.
+      setTimeout(function() {
+        if (input.value.trim().length <= 1 && text.endsWith(input.value.trim())) {
+          input.value = '';
+        }
+      }, 30);
     }
 
     function handleTaskInputKey(event) {
-      if (event.key === 'Enter') addTask();
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+
+      // 한글 입력 중에는 Enter가 '글자 확정' 역할을 먼저 할 수 있어.
+      // 이때 바로 addTask()를 실행하면 마지막 글자만 한 번 더 추가되는 버그가 생길 수 있음.
+      if (taskInputIsComposing || event.isComposing || event.keyCode === 229) {
+        taskEnterPendingAfterComposition = true;
+        return;
+      }
+
+      addTask();
+    }
+
+    function setupTaskInputCompositionGuard() {
+      const input = document.getElementById('taskInput');
+      if (!input) return;
+
+      input.addEventListener('compositionstart', function() {
+        taskInputIsComposing = true;
+      });
+
+      input.addEventListener('compositionend', function() {
+        taskInputIsComposing = false;
+
+        if (taskEnterPendingAfterComposition) {
+          taskEnterPendingAfterComposition = false;
+          setTimeout(function() {
+            addTask();
+          }, 0);
+        }
+      });
     }
 
     function toggleTask(id) {
@@ -1242,6 +1297,7 @@
     window.addEventListener('load', function() {
       applyProfile();
       applyDesign();
+      setupTaskInputCompositionGuard();
       loadTasks();
       renderTaskList();
       renderHomeSummary();
