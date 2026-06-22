@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>화의 흔적 수집함</title>
+
+  <!-- PWA 설정 -->
+  <meta name="theme-color" content="#4f8ef7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="화의앱">
+  <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;화의 흔적 수집함&quot;,&quot;short_name&quot;:&quot;화의앱&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23ffffff&quot;,&quot;theme_color&quot;:&quot;%234f8ef7&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📋%3C/text%3E%3C/svg%3E&quot;,&quot;sizes&quot;:&quot;any&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]}">
+
+  <!-- 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===================================================
+       CSS 변수 — 여기서 색상·폰트를 바꾸세요
+       =================================================== */
+    :root {
+      --primary:        #4f8ef7;
+      --primary-light:  #e8f0fe;
+      --bg-main:        #f5f6fa;
+      --bg-sidebar:     #ffffff;
+      --card-bg:        #ffffff;
+      --text-primary:   #1a1a1a;
+      --text-secondary: #666666;
+      --text-tertiary:  #aaaaaa;
+      --border-color:   #e0e0e0;
+      --sidebar-width:  220px;
+      --font-main:      'Noto Sans KR', sans-serif;
+    }
+
+    /* ===================================================
+       리셋 & 기본
+       =================================================== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--bg-main);
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ===================================================
+       레이아웃
+       =================================================== */
+    .app-container { display: flex; min-height: 100vh; }
+
+    /* 사이드바 */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 100;
+      transition: transform 0.25s ease;
+    }
+
+    /* 사이드바 상단 — 로고 + 프로필 */
+    .sidebar-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-logo {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .profile-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-photo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .profile-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-info { flex: 1; min-width: 0; }
+
+    .profile-name {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-quote {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 사이드바 네비게이션 */
+    .sidebar-nav { flex: 1; padding: 12px 0; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-secondary);
+      transition: background 0.15s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: var(--font-main);
+    }
+
+    .nav-item:hover { background: var(--bg-main); color: var(--text-primary); }
+    .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 500; }
+
+    /* 사이드바 하단 푸터 */
+    .sidebar-footer {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .sf-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-family: var(--font-main);
+      transition: background 0.15s;
+    }
+
+    .sf-btn:hover { background: var(--bg-main); }
+
+    /* 메인 콘텐츠 */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 32px;
+      min-height: 100vh;
+    }
+
+    /* ===================================================
+       페이지 전환
+       =================================================== */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .page-header { margin-bottom: 24px; }
+    .page-header h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .page-header p { color: var(--text-secondary); font-size: 13px; }
+
+    /* ===================================================
+       카드
+       =================================================== */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+
+    /* ===================================================
+       버튼
+       =================================================== */
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font-main);
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: var(--font-main);
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: var(--bg-main); }
+
+    .btn-danger {
+      background: transparent;
+      color: #e53e3e;
+      border: 1px solid #e53e3e;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: var(--font-main);
+      transition: background 0.15s;
+    }
+    .btn-danger:hover { background: #fff5f5; }
+
+    /* ===================================================
+       입력 필드
+       =================================================== */
+    .input-field {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: var(--font-main);
+      background: #fff;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .input-field:focus { border-color: var(--primary); }
+
+    /* 설정 폼 레이블 */
+    .form-row { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+
+    /* 설정 탭 */
+    .settings-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .settings-tab {
+      background: transparent;
+      border: none;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-secondary);
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      font-family: var(--font-main);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .settings-tab:hover { color: var(--text-primary); background: var(--bg-main); }
+    .settings-tab.active { color: var(--text-primary); border-bottom-color: var(--primary); }
+    .settings-section { display: none; }
+    .settings-section.active { display: block; }
+
+    /* ===================================================
+       모달
+       =================================================== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 420px;
+      margin: 16px;
+    }
+    .modal-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* ===================================================
+       토스트
+       =================================================== */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a1a1a;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 9999;
+      transition: transform 0.25s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+
+
+    /* ===================================================
+       화 전용 할 일 / 흔적 수집 UI
+       =================================================== */
+    .home-hero {
+      background: linear-gradient(135deg, var(--primary-light), #ffffff);
+      border: 1px solid var(--border-color);
+    }
+
+    .today-line {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .daily-message {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .stat-number {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .task-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .task-input-row .input-field { flex: 1; }
+
+    .task-filter-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .filter-btn {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: var(--font-main);
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover { background: var(--bg-main); }
+    .filter-btn.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      transition: transform 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .task-item:hover { transform: translateY(-1px); border-color: var(--primary); }
+    .task-item.done { background: #fbfbfb; }
+
+    .task-main { flex: 1; min-width: 0; }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .task-item.done .task-title {
+      color: var(--text-tertiary);
+      text-decoration: line-through;
+    }
+
+    .task-meta {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .task-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: var(--bg-main);
+    }
+
+    .task-badge.done-badge {
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 600;
+    }
+
+    .task-action-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--font-main);
+      white-space: nowrap;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+
+    .task-action-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+    .task-done-btn {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .task-undo-btn {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .task-delete-btn {
+      background: transparent;
+      color: #e53e3e;
+      border: 1px solid #f2b8b8;
+    }
+
+    .empty-state {
+      color: var(--text-tertiary);
+      text-align: center;
+      padding: 36px 0;
+      font-size: 13px;
+    }
+
+    .done-list-home {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .done-home-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      background: var(--bg-main);
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .done-home-item strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 10px;
+      background: var(--bg-main);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .small-help {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .task-input-row { flex-direction: column; }
+      .task-item { align-items: flex-start; flex-wrap: wrap; }
+      .task-action-btn { flex: 1; }
+    }
+
+    /* ===================================================
+       모바일
+       =================================================== */
+    .mobile-top-bar {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      background: #fff;
+      border-bottom: 1px solid var(--border-color);
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+      z-index: 200;
+    }
+    .mobile-hamburger {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--text-primary);
+    }
+    .mobile-title { font-size: 16px; font-weight: 700; }
+
+    @media (max-width: 768px) {
+      .mobile-top-bar { display: flex; }
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
+      .main-content { margin-left: 0; padding: 72px 16px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 모바일 상단 바 -->
+  <div class="mobile-top-bar" id="mobileTopBar">
+    <button class="mobile-hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="mobile-title" id="mobilePageTitle">화의 흔적 수집함</div>
+  </div>
+
+  <!-- 앱 전체 레이아웃 -->
+  <div class="app-container">
+
+    <!-- 사이드바 -->
+    <aside class="sidebar" id="sidebar">
+
+      <!-- 로고 + 프로필 -->
+      <div class="sidebar-header">
+        <div class="sidebar-logo">🐾 화의 흔적 수집함</div>
+        <div class="profile-area">
+          <div class="profile-photo" id="profilePhoto" onclick="showPage('settingsPage', null, '⚙️ 설정')">
+            👤
+          </div>
+          <div class="profile-info">
+            <div class="profile-name" id="profileName">이름을 설정하세요</div>
+            <div class="profile-quote" id="profileQuote">못생긴 시작도 시작이다</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 네비게이션 -->
+      <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="showPage('homePage', this, '🏠 홈')">🏠 홈</button>
+        <button class="nav-item" onclick="showPage('taskPage', this, '📝 할일 목록')">📝 할일 목록</button>
+        <button class="nav-item" onclick="showPage('settingsPage', this, '⚙️ 설정')">⚙️ 설정</button>
+      </nav>
+
+      <!-- 하단 푸터 -->
+      <div class="sidebar-footer">
+        <button class="sf-btn" onclick="location.reload()" title="페이지 새로고침">🔄 새로고침</button>
+      </div>
+
+    </aside>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+
+      <!-- 홈 페이지 -->
+      <div id="homePage" class="page active">
+        <div class="page-header">
+          <h2>🏠 홈</h2>
+          <p>오늘의 작은 흔적을 모아봐요</p>
+        </div>
+
+        <div class="card home-hero">
+          <div class="today-line" id="todayDateText">오늘 날짜</div>
+          <div class="daily-message" id="homeEncouragement">오늘은 시동 거는 중. 아주 작은 것부터 가자.</div>
+          <div class="progress-bar-wrap" aria-label="오늘 진행률">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+          </div>
+          <p class="small-help" id="progressText">아직 남긴 흔적을 세는 중이에요.</p>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">오늘의 할 일</div>
+              <div class="stat-number" id="statTotal">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">해낸 일</div>
+              <div class="stat-number" id="statDone">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">기다리는 일</div>
+              <div class="stat-number" id="statActive">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🏆 오늘 내가 해낸 일</h3>
+          <div id="doneTasksHome" class="done-list-home">
+            <p class="empty-state">아직 생색낼 흔적이 없어요. 하나만 해도 바로 여기 뜸.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 할일 목록 페이지 -->
+      <div id="taskPage" class="page">
+        <div class="page-header">
+          <h2>📝 흔적 목록</h2>
+          <p>오늘 할 일을 적고, 해낸 일은 당당하게 생색내요</p>
+        </div>
+
+        <div class="card">
+          <h3>✍️ 오늘 할 일 추가</h3>
+          <div class="task-input-row">
+            <input class="input-field" id="taskInput" type="text" placeholder="예: 책자 2쪽 수정하기, 방 정리 20분, 메일 답장하기" onkeydown="handleTaskInputKey(event)">
+            <button class="btn-primary" onclick="addTask()">흔적 후보 추가</button>
+          </div>
+          <p class="small-help">작게 적어도 좋아요. ‘대청소’보다 ‘책상 위 컵 치우기’가 앱도 사람도 덜 놀람.</p>
+        </div>
+
+        <div class="card">
+          <h3>🐾 오늘의 흔적들</h3>
+          <div class="task-filter-row">
+            <button class="filter-btn active" id="filterAll" onclick="setTaskFilter('all', this)">전체</button>
+            <button class="filter-btn" id="filterActive" onclick="setTaskFilter('active', this)">아직 기다리는 일</button>
+            <button class="filter-btn" id="filterDone" onclick="setTaskFilter('done', this)">해낸 일</button>
+          </div>
+          <div id="taskList" class="task-list">
+            <p class="empty-state">아직 적힌 일이 없어요. 일단 하나만 적어보자. 못생긴 시작 환영.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 설정 페이지 -->
+      <div id="settingsPage" class="page">
+        <div class="page-header">
+          <h2>⚙️ 설정</h2>
+          <p>앱 설정을 관리하세요</p>
+        </div>
+
+        <!-- 설정 탭 -->
+        <div class="settings-tabs">
+          <button class="settings-tab active" onclick="showSettingsSection('profile', this)">👤 프로필</button>
+          <button class="settings-tab" onclick="showSettingsSection('design', this)">🎨 디자인</button>
+          <button class="settings-tab" onclick="showSettingsSection('data', this)">📦 데이터</button>
+        </div>
+
+        <!-- 프로필 섹션 -->
+        <div id="settingsSectionProfile" class="settings-section active">
+          <div class="card">
+            <h3>👤 프로필 설정</h3>
+
+            <!-- 프로필 사진 -->
+            <div class="form-row" style="text-align: center; margin-bottom: 20px;">
+              <div id="profilePhotoPreview" onclick="document.getElementById('profilePhotoInput').click()"
+                style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary-light); border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 40px; cursor: pointer; margin: 0 auto 8px; overflow: hidden;">
+                👤
+              </div>
+              <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;" onchange="handleProfilePhoto(event)">
+              <p style="font-size: 12px; color: var(--text-tertiary);">클릭하여 프로필 사진 변경</p>
+            </div>
+
+            <!-- 이름 -->
+            <div class="form-row">
+              <label class="form-label">이름</label>
+              <input class="input-field" id="profileNameInput" type="text" placeholder="이름을 입력하세요">
+            </div>
+
+            <!-- 한마디 -->
+            <div class="form-row">
+              <label class="form-label">한마디</label>
+              <input class="input-field" id="profileQuoteInput" type="text" placeholder="못생긴 시작도 시작이다">
+            </div>
+
+            <button class="btn-primary" onclick="saveProfile()">저장</button>
+          </div>
+        </div>
+
+        <!-- 디자인 섹션 -->
+        <div id="settingsSectionDesign" class="settings-section">
+          <div class="card">
+            <h3>🎨 디자인 설정</h3>
+
+            <div class="form-row">
+              <label class="form-label">메인 포인트 색상</label>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="color" id="colorPrimary" value="#4f8ef7"
+                  oninput="document.documentElement.style.setProperty('--primary', this.value); document.documentElement.style.setProperty('--primary-light', this.value + '22');"
+                  style="width: 40px; height: 32px; border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; padding: 2px;">
+                <span id="colorPrimaryValue" style="font-size: 13px; color: var(--text-secondary); font-family: monospace;">#4f8ef7</span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label">사이드바 배경 색상</label>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="color" id="colorSidebar" value="#ffffff"
+                  oninput="document.documentElement.style.setProperty('--bg-sidebar', this.value);"
+                  style="width: 40px; height: 32px; border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; padding: 2px;">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-label">기본 폰트</label>
+              <select class="input-field" id="fontFamily"
+                onchange="document.documentElement.style.setProperty('--font-main', this.value);"
+                style="width: auto;">
+                <option value="'Noto Sans KR', sans-serif">Noto Sans KR (기본)</option>
+                <option value="'Malgun Gothic', sans-serif">맑은 고딕</option>
+                <option value="-apple-system, BlinkMacSystemFont, sans-serif">시스템 기본</option>
+              </select>
+            </div>
+
+            <button class="btn-primary" onclick="saveDesign()">저장</button>
+            <button class="btn-secondary" style="margin-left: 8px;" onclick="resetDesign()">기본값으로</button>
+          </div>
+        </div>
+
+        <!-- 데이터 섹션 -->
+        <div id="settingsSectionData" class="settings-section">
+          <div class="card">
+            <h3>📦 데이터 관리</h3>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">
+              앱에 저장된 모든 데이터를 초기화합니다. 이 작업은 되돌릴 수 없어요.
+            </p>
+            <button class="btn-danger" onclick="clearAllData()">🗑 모든 데이터 초기화</button>
+          </div>
+        </div>
+
+      </div>
+      <!-- /설정 페이지 -->
+
+    </main>
+  </div>
+
+  <!-- 확인 모달 -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal-box">
+      <h3 id="modalTitle">확인</h3>
+      <p id="modalMessage" style="color: var(--text-secondary);"></p>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal()">취소</button>
+        <button class="btn-primary" id="modalConfirmBtn">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 -->
+  <div id="toast"></div>
+
+  <script>
+    // =====================================================
+    // 유틸리티 함수
+    // =====================================================
+
+    function showToast(message, duration = 2000) {
+      const t = document.getElementById('toast');
+      t.textContent = message;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), duration);
+    }
+
+    function showPage(pageId, navBtn, title) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      if (navBtn) navBtn.classList.add('active');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('mobilePageTitle').textContent = title || '화의 흔적 수집함';
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function openModal(title, message, onConfirm) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalMessage').textContent = message;
+      document.getElementById('modal').classList.add('open');
+      document.getElementById('modalConfirmBtn').onclick = () => { onConfirm(); closeModal(); };
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+
+    function showSettingsSection(key, btn) {
+      document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
+      document.getElementById('settingsSection' + key.charAt(0).toUpperCase() + key.slice(1)).classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    // =====================================================
+    // 프로필
+    // =====================================================
+
+    var profileData = { name: '', quote: '', photo: '' };
+
+    function saveProfile() {
+      profileData.name  = document.getElementById('profileNameInput').value.trim();
+      profileData.quote = document.getElementById('profileQuoteInput').value.trim();
+      applyProfile();
+      showToast('✅ 프로필이 저장됐어요 (새로고침하면 초기화돼요)');
+    }
+
+    function handleProfilePhoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        profileData.photo = e.target.result;
+        applyProfile();
+        showToast('✅ 사진이 저장됐어요 (새로고침하면 초기화돼요)');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function applyProfile() {
+      const name  = profileData.name  || '이름을 설정하세요';
+      const quote = profileData.quote || '못생긴 시작도 시작이다';
+      const photo = profileData.photo;
+
+      document.getElementById('profileName').textContent  = name;
+      document.getElementById('profileQuote').textContent = quote;
+
+      const photoEls = [document.getElementById('profilePhoto'), document.getElementById('profilePhotoPreview')];
+      photoEls.forEach(el => {
+        if (!el) return;
+        el.innerHTML = photo ? '<img src="' + photo + '" alt="프로필">' : '👤';
+      });
+    }
+
+    // =====================================================
+    // 디자인
+    // =====================================================
+
+    function saveDesign() {
+      applyDesignValues();
+      showToast('✅ 디자인이 저장됐어요 (새로고침하면 초기화돼요)');
+    }
+
+    function applyDesignValues() {
+      const primary = document.getElementById('colorPrimary').value;
+      const sidebar = document.getElementById('colorSidebar').value;
+      const font    = document.getElementById('fontFamily').value;
+      document.documentElement.style.setProperty('--primary', primary);
+      document.documentElement.style.setProperty('--primary-light', primary + '22');
+      document.documentElement.style.setProperty('--bg-sidebar', sidebar);
+      document.documentElement.style.setProperty('--font-main', font);
+    }
+
+    function applyDesign() {
+      // localStorage 연결 전: 기본값만 적용
+    }
+
+    function resetDesign() {
+      document.documentElement.style.removeProperty('--primary');
+      document.documentElement.style.removeProperty('--primary-light');
+      document.documentElement.style.removeProperty('--bg-sidebar');
+      document.documentElement.style.removeProperty('--font-main');
+      document.getElementById('colorPrimary').value = '#4f8ef7';
+      document.getElementById('colorSidebar').value = '#ffffff';
+      document.getElementById('fontFamily').value   = "'Noto Sans KR', sans-serif";
+      showToast('↩️ 기본값으로 돌아왔어요');
+    }
+
+    // =====================================================
+    // 데이터 초기화
+    // =====================================================
+
+    function clearAllData() {
+      openModal(
+        '데이터 초기화',
+        '모든 데이터가 삭제됩니다. 정말 초기화할까요?',
+        function() {
+          localStorage.removeItem('hwaTasks');
+          tasks = [];
+          renderTaskList();
+          renderHomeSummary();
+          showToast('🗑 데이터가 초기화됐어요');
+        }
+      );
+    }
+
+    // =====================================================
+    // 여기서부터 채워야 할 빈 함수들
+    // =====================================================
+
+    var tasks = [];
+    var currentTaskFilter = 'all';
+
+    var celebrationMessages = [
+      '🎉 해냈다! 이건 생색내도 됨',
+      '👏 오늘의 흔적 하나 추가',
+      '🌿 작지만 분명히 했다',
+      '✨ 증거 확보. 아무것도 안 한 날 아님',
+      '🔥 오늘의 나, 일했다',
+      '🐾 못생긴 시작이 결국 해냈다',
+      '💪 나 제법인데? 생색권 획득'
+    ];
+
+    function addTask() {
+      const input = document.getElementById('taskInput');
+      const text = input.value.trim();
+
+      if (!text) {
+        showToast('✍️ 할 일을 먼저 적어줘요');
+        input.focus();
+        return;
+      }
+
+      const newTask = {
+        id: Date.now(),
+        text: text,
+        done: false,
+        createdAt: new Date().toISOString(),
+        doneAt: ''
+      };
+
+      tasks.unshift(newTask);
+      input.value = '';
+      saveTasks();
+      renderTaskList();
+      renderHomeSummary();
+      showToast('🐾 흔적 후보가 추가됐어요');
+      input.focus();
+    }
+
+    function handleTaskInputKey(event) {
+      if (event.key === 'Enter') addTask();
+    }
+
+    function toggleTask(id) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+
+      task.done = !task.done;
+      task.doneAt = task.done ? new Date().toISOString() : '';
+
+      saveTasks();
+      renderTaskList();
+      renderHomeSummary();
+
+      if (task.done) {
+        showToast(getRandomCelebration());
+      } else {
+        showToast('↩️ 다시 할 일로 돌려놨어요');
+      }
+    }
+
+    function deleteTask(id) {
+      const task = tasks.find(t => t.id === id);
+      const taskName = task ? task.text : '이 할 일';
+
+      openModal(
+        '없던 일로 할까요?',
+        '“' + taskName + '” 항목을 삭제할까요?',
+        function() {
+          tasks = tasks.filter(t => t.id !== id);
+          saveTasks();
+          renderTaskList();
+          renderHomeSummary();
+          showToast('🧹 없던 일로 정리했어요');
+        }
+      );
+    }
+
+    function renderTaskList() {
+      const listEl = document.getElementById('taskList');
+      if (!listEl) return;
+
+      const filteredTasks = tasks.filter(task => {
+        if (currentTaskFilter === 'active') return !task.done;
+        if (currentTaskFilter === 'done') return task.done;
+        return true;
+      });
+
+      if (filteredTasks.length === 0) {
+        const message = currentTaskFilter === 'done'
+          ? '아직 해낸 일이 없어요. 하나만 해도 생색 리스트에 올라감.'
+          : currentTaskFilter === 'active'
+            ? '기다리는 일이 없어요. 오? 지금 꽤 평화로운데?'
+            : '아직 적힌 일이 없어요. 일단 하나만 적어보자. 못생긴 시작 환영.';
+        listEl.innerHTML = '<p class="empty-state">' + message + '</p>';
+        return;
+      }
+
+      listEl.innerHTML = filteredTasks.map(task => {
+        const safeText = escapeHtml(task.text);
+        const doneClass = task.done ? ' done' : '';
+        const statusBadge = task.done
+          ? '<span class="task-badge done-badge">🏆 생색권 획득</span>'
+          : '<span class="task-badge">⏳ 아직 기다리는 중</span>';
+        const actionBtn = task.done
+          ? '<button class="task-action-btn task-undo-btn" onclick="toggleTask(' + task.id + ')">다시 할래</button>'
+          : '<button class="task-action-btn task-done-btn" onclick="toggleTask(' + task.id + ')">해냈다!</button>';
+
+        return '' +
+          '<div class="task-item' + doneClass + '">' +
+            '<div class="task-main">' +
+              '<div class="task-title">' + safeText + '</div>' +
+              '<div class="task-meta">' + statusBadge + '</div>' +
+            '</div>' +
+            actionBtn +
+            '<button class="task-action-btn task-delete-btn" onclick="deleteTask(' + task.id + ')">없던 일로</button>' +
+          '</div>';
+      }).join('');
+    }
+
+    function saveTasks() {
+      localStorage.setItem('hwaTasks', JSON.stringify(tasks));
+    }
+
+    function loadTasks() {
+      const saved = localStorage.getItem('hwaTasks');
+      if (!saved) {
+        tasks = [];
+        return;
+      }
+
+      try {
+        tasks = JSON.parse(saved) || [];
+      } catch (error) {
+        tasks = [];
+        showToast('⚠️ 저장된 할 일을 불러오지 못했어요');
+      }
+    }
+
+    function setTaskFilter(filter, btn) {
+      currentTaskFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderTaskList();
+    }
+
+    function renderHomeSummary() {
+      const total = tasks.length;
+      const done = tasks.filter(t => t.done).length;
+      const active = total - done;
+      const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+
+      setText('statTotal', total);
+      setText('statDone', done);
+      setText('statActive', active);
+      setText('progressText', total === 0 ? '오늘은 시동 걸기 전. 하나만 적어도 시작이에요.' : '진행률 ' + percent + '% · ' + done + '개의 흔적을 남겼어요.');
+      setText('homeEncouragement', getHomeEncouragement(done, total));
+
+      const progressBar = document.getElementById('progressBarFill');
+      if (progressBar) progressBar.style.width = percent + '%';
+
+      const todayText = document.getElementById('todayDateText');
+      if (todayText) todayText.textContent = getTodayText();
+
+      renderDoneTasksHome();
+    }
+
+    function renderDoneTasksHome() {
+      const homeList = document.getElementById('doneTasksHome');
+      if (!homeList) return;
+
+      const doneTasks = tasks.filter(t => t.done);
+      if (doneTasks.length === 0) {
+        homeList.innerHTML = '<p class="empty-state">아직 생색낼 흔적이 없어요. 하나만 해도 바로 여기 뜸.</p>';
+        return;
+      }
+
+      homeList.innerHTML = doneTasks.slice(0, 6).map(task => {
+        return '<div class="done-home-item">✅ <strong>' + escapeHtml(task.text) + '</strong></div>';
+      }).join('');
+
+      if (doneTasks.length > 6) {
+        homeList.innerHTML += '<div class="done-home-item">✨ 외 ' + (doneTasks.length - 6) + '개 더 해냄. 생색 과다 적립.</div>';
+      }
+    }
+
+    function getRandomCelebration() {
+      const index = Math.floor(Math.random() * celebrationMessages.length);
+      return celebrationMessages[index];
+    }
+
+    function getHomeEncouragement(done, total) {
+      if (total === 0) return '오늘은 시동 거는 중. 아주 작은 것부터 가자.';
+      if (done === 0) return '아직 해낸 일은 없어도 괜찮아. 적어둔 것부터 이미 시작이야.';
+      if (done === 1) return '좋다. 흔적 하나 남겼다. 이 정도면 오늘의 나 움직였다.';
+      if (done < 3) return '오? 오늘 꽤 굴러가고 있는데? 작은 승리 적립 중.';
+      if (done < 5) return '생색 허가. 오늘 일한 사람 맞음.';
+      return '오늘의 화, 제법 전설이다. 생색 잔치 열어도 됨.';
+    }
+
+    function getTodayText() {
+      const today = new Date();
+      return today.toLocaleDateString('ko-KR', {
+        year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
+      });
+    }
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    // =====================================================
+    // 초기화
+    // =====================================================
+
+    window.addEventListener('load', function() {
+      applyProfile();
+      applyDesign();
+      loadTasks();
+      renderTaskList();
+      renderHomeSummary();
+    });
+  </script>
+</body>
+</html>
