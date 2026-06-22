@@ -691,11 +691,42 @@
       <div id="homePage" class="page active">
         <div class="page-header">
           <h2>🏠 홈</h2>
-          <p>오늘의 작은 흔적을 모아봐요</p>
+          <p>오늘 상태를 한눈에 보는 대시보드</p>
         </div>
+
+        <div class="card home-hero">
+          <div class="today-line" id="todayDateText">오늘 날짜 불러오는 중</div>
+          <h3 style="margin-bottom: 8px;">오늘 한마디</h3>
+          <div class="daily-message" id="todayOneLiner">🧩 못생기게 완성하자</div>
+          <p class="small-help" id="homeEncouragement">오늘 할 일을 가볍게 정리해보자.</p>
+        </div>
+
+        <div class="stats-grid" style="margin-bottom: 16px;">
+          <div class="stat-card">
+            <div class="stat-label">오늘의 할 일</div>
+            <div class="stat-number" id="statTotal">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">해낸 일</div>
+            <div class="stat-number" id="statDone">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">기다리는 일</div>
+            <div class="stat-number" id="statActive">0</div>
+          </div>
+        </div>
+
         <div class="card">
-          <h3>시작하기</h3>
-          <p style="color: var(--text-secondary);">왼쪽 메뉴에서 원하는 기능을 선택하세요.</p>
+          <h3>📊 오늘의 할 일</h3>
+          <p class="small-help" id="progressText">아직 적힌 할 일이 없어.</p>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBarFill"></div></div>
+        </div>
+
+        <div class="card">
+          <h3>✅ 오늘 내가 해낸 일</h3>
+          <div class="done-list-home" id="doneTasksHome">
+            <p class="empty-state">아직 해낸 일이 없어. 하나만 끝내도 여기에 뜸.</p>
+          </div>
         </div>
       </div>
 
@@ -1210,8 +1241,9 @@
       setText('statTotal', total);
       setText('statDone', done);
       setText('statActive', active);
-      setText('progressText', total === 0 ? '오늘은 시동 걸기 전. 하나만 적어도 시작이에요.' : '진행률 ' + percent + '% · ' + done + '개의 흔적을 남겼어요.');
+      setText('progressText', total === 0 ? '아직 적힌 할 일이 없어. 하나만 적어도 시작.' : '진행률 ' + percent + '% · ' + done + '개 끝냄 · ' + active + '개 기다리는 중');
       setText('homeEncouragement', getHomeEncouragement(done, total));
+      setText('todayOneLiner', getTodayOneLiner());
 
       const progressBar = document.getElementById('progressBarFill');
       if (progressBar) progressBar.style.width = percent + '%';
@@ -1228,7 +1260,7 @@
 
       const doneTasks = tasks.filter(t => t.done);
       if (doneTasks.length === 0) {
-        homeList.innerHTML = '<p class="empty-state">아직 생색낼 흔적이 없어요. 하나만 해도 바로 여기 뜸.</p>';
+        homeList.innerHTML = '<p class="empty-state">아직 해낸 일이 없어. 하나만 끝내도 여기에 뜸.</p>';
         return;
       }
 
@@ -1237,7 +1269,7 @@
       }).join('');
 
       if (doneTasks.length > 6) {
-        homeList.innerHTML += '<div class="done-home-item">✨ 외 ' + (doneTasks.length - 6) + '개 더 해냄. 생색 과다 적립.</div>';
+        homeList.innerHTML += '<div class="done-home-item">✨ 외 ' + (doneTasks.length - 6) + '개 더 끝냄.</div>';
       }
     }
 
@@ -1247,12 +1279,32 @@
     }
 
     function getHomeEncouragement(done, total) {
-      if (total === 0) return '오늘은 시동 거는 중. 아주 작은 것부터 가자.';
-      if (done === 0) return '아직 해낸 일은 없어도 괜찮아. 적어둔 것부터 이미 시작이야.';
-      if (done === 1) return '좋다. 흔적 하나 남겼다. 이 정도면 오늘의 나 움직였다.';
-      if (done < 3) return '오? 오늘 꽤 굴러가고 있는데? 작은 승리 적립 중.';
-      if (done < 5) return '생색 허가. 오늘 일한 사람 맞음.';
-      return '오늘의 화, 제법 전설이다. 생색 잔치 열어도 됨.';
+      if (total === 0) return '오늘 할 일을 하나만 적어보자. 작게 가자.';
+      if (done === 0) return '아직 시작 전. 제일 만만한 것 하나만 고르면 됨.';
+      if (done === 1) return '좋아, 하나 끝냈다. 오늘은 이미 움직였음.';
+      if (done < 3) return '조금씩 정리되는 중. 이 정도면 흐름 생김.';
+      if (done < 5) return '꽤 했다. 이제 무리하지 말고 숨 좀 쉬자.';
+      return '오늘 많이 했다. 더 증명 안 해도 됨.';
+    }
+
+    function getTodayOneLiner() {
+      const messages = [
+        '🚧 잘하지 말기!!!! 금지야.',
+        '🧩 못생기게 완성하자.',
+        '🎲 결과는 내 몫이 아니야, 난 천재가 아니라고.',
+        '🦥 너무 열심히 하지말자.',
+        '🍚 잘 먹고 잘 자기.',
+        '🐷 돼지는 꿀꿀.',
+        '🍃 대충하는 마음.',
+        '🌳 나무, 바다, 하늘!',
+        '👻 최고는 없음 우우~',
+        '🌞 오늘 하루는 내 거.'
+      ];
+
+      // 날짜 기준으로 하나를 고르면 새로고침해도 같은 날에는 같은 문구가 보여.
+      const today = new Date();
+      const dateKey = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+      return messages[dateKey % messages.length];
     }
 
     function getTodayText() {
