@@ -691,17 +691,83 @@
       font-weight: 600;
     }
 
+    .archive-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .archive-section-head h3 { margin-bottom: 4px; }
+    .archive-section-head p { color: var(--text-secondary); font-size: 13px; }
+
+    .archive-write-panel { display: none; }
+    .archive-write-panel.open { display: block; }
+
     .archive-form-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 180px;
       gap: 12px;
     }
 
-    .archive-textarea {
-      min-height: 220px;
-      resize: vertical;
-      line-height: 1.7;
+    .archive-editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      background: #fafafa;
     }
+
+    .archive-editor-btn {
+      border: 1px solid var(--border-color);
+      background: #fff;
+      color: var(--text-secondary);
+      border-radius: 6px;
+      padding: 5px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--font-main);
+    }
+
+    .archive-editor-btn:hover { background: var(--primary-light); color: var(--primary); }
+
+    .archive-editor {
+      min-height: 260px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding: 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 0 0 8px 8px;
+      background: #fff;
+      outline: none;
+      line-height: 1.8;
+      font-size: 14px;
+      color: var(--text-primary);
+      word-break: break-word;
+    }
+
+    .archive-editor:focus { border-color: var(--primary); }
+    .archive-editor:empty::before {
+      content: attr(data-placeholder);
+      color: var(--text-tertiary);
+    }
+
+    .archive-editor h2 { font-size: 20px; margin: 12px 0 8px; line-height: 1.45; }
+    .archive-editor h3 { font-size: 17px; margin: 10px 0 6px; line-height: 1.45; }
+    .archive-editor blockquote {
+      border-left: 3px solid var(--primary);
+      margin: 10px 0;
+      padding: 8px 12px;
+      background: var(--primary-light);
+      color: var(--text-secondary);
+      border-radius: 0 8px 8px 0;
+    }
+    .archive-editor ul, .archive-editor ol { padding-left: 22px; margin: 8px 0; }
+    .archive-editor hr { border: none; border-top: 1px solid var(--border-color); margin: 14px 0; }
 
     .archive-small-textarea {
       min-height: 82px;
@@ -714,6 +780,78 @@
       gap: 8px;
       flex-wrap: wrap;
       margin-top: 12px;
+    }
+
+    .archive-calendar-card { margin-bottom: 16px; }
+
+    .archive-calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .archive-calendar-title {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .archive-calendar-nav {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .archive-calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .archive-weekday {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      padding: 4px 0;
+      font-weight: 600;
+    }
+
+    .archive-calendar-cell {
+      min-height: 62px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: #fff;
+      padding: 7px;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--font-main);
+      transition: all 0.15s;
+      position: relative;
+    }
+
+    .archive-calendar-cell:hover { background: var(--bg-main); border-color: var(--primary); }
+    .archive-calendar-cell.empty { background: transparent; border-color: transparent; cursor: default; }
+    .archive-calendar-cell.today { box-shadow: inset 0 0 0 1.5px var(--primary); }
+    .archive-calendar-cell.selected { background: var(--primary-light); border-color: var(--primary); }
+    .archive-calendar-cell.has-entry { font-weight: 700; }
+
+    .archive-day-number { font-size: 13px; color: var(--text-primary); }
+    .archive-day-count {
+      position: absolute;
+      right: 6px;
+      bottom: 6px;
+      min-width: 19px;
+      height: 19px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
     }
 
     .archive-toolbar {
@@ -735,8 +873,8 @@
     }
 
     .archive-list {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 12px;
     }
 
@@ -745,6 +883,9 @@
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 16px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
     }
 
     .archive-entry-top {
@@ -756,7 +897,7 @@
     }
 
     .archive-entry-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       line-height: 1.45;
       word-break: break-word;
@@ -765,7 +906,6 @@
     .archive-entry-meta {
       font-size: 12px;
       color: var(--text-tertiary);
-      white-space: nowrap;
       margin-top: 2px;
     }
 
@@ -819,21 +959,32 @@
     .archive-body-full {
       display: none;
       margin-top: 12px;
-      padding: 12px;
+      padding: 14px;
       border-radius: 10px;
       background: var(--bg-main);
       color: var(--text-secondary);
       font-size: 13px;
       line-height: 1.8;
-      white-space: pre-wrap;
       word-break: break-word;
+    }
+
+    .archive-body-full h2 { font-size: 19px; color: var(--text-primary); margin: 10px 0 8px; }
+    .archive-body-full h3 { font-size: 16px; color: var(--text-primary); margin: 10px 0 6px; }
+    .archive-body-full ul, .archive-body-full ol { padding-left: 22px; margin: 8px 0; }
+    .archive-body-full blockquote {
+      border-left: 3px solid var(--primary);
+      background: #fff;
+      border-radius: 0 8px 8px 0;
+      padding: 8px 12px;
+      margin: 10px 0;
     }
 
     .archive-card-actions {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      margin-top: auto;
+      padding-top: 12px;
     }
 
     .archive-mini-btn {
@@ -859,7 +1010,8 @@
       .archive-stat-grid { grid-template-columns: 1fr; }
       .archive-form-grid { grid-template-columns: 1fr; }
       .archive-entry-top { flex-direction: column; }
-      .archive-entry-meta { white-space: normal; }
+      .archive-calendar-cell { min-height: 48px; padding: 5px; }
+      .archive-list { grid-template-columns: 1fr; }
     }
 
     /* ===================================================
@@ -1053,6 +1205,86 @@
           <p>긴 일기, 대화 요약, 깨달음, 키워드를 차곡차곡 쌓아두는 곳</p>
         </div>
 
+        <div class="card">
+          <div class="archive-section-head">
+            <div>
+              <h3>✍️ 새 기록 쓰기</h3>
+              <p>글쓰기 폼은 접어두고, 필요할 때만 열어서 써.</p>
+            </div>
+            <button class="btn-primary" id="archiveWriteToggleBtn" onclick="toggleArchiveForm()">+ 새 기록 쓰기</button>
+          </div>
+        </div>
+
+        <div class="card archive-write-panel" id="archiveWritePanel">
+          <h3 id="archiveFormTitle">✍️ 새 기록 쓰기</h3>
+          <div class="archive-form-grid">
+            <div class="form-row">
+              <label class="form-label">제목</label>
+              <input class="input-field" id="archiveTitleInput" type="text" placeholder="예: 무너짐이 있었지만 내가 무너짐 자체는 아니다">
+            </div>
+            <div class="form-row">
+              <label class="form-label">분류</label>
+              <select class="input-field" id="archiveCategoryInput">
+                <option>일기</option>
+                <option>대화</option>
+                <option>깨달음</option>
+                <option>실험</option>
+                <option>작업</option>
+                <option>관계</option>
+                <option>진로</option>
+                <option>마음</option>
+                <option>독서</option>
+                <option>명상</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">본문</label>
+            <div class="archive-editor-toolbar" aria-label="본문 서식 도구">
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('bold')"><strong>B</strong></button>
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('italic')"><em>I</em></button>
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('underline')"><u>U</u></button>
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('formatBlock', 'h2')">큰 문장</button>
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('formatBlock', 'h3')">소제목</button>
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('formatBlock', 'p')">본문</button>
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('insertUnorderedList')">• 목록</button>
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('insertOrderedList')">1. 목록</button>
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('formatBlock', 'blockquote')">인용</button>
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('insertHorizontalRule')">구분선</button>
+              <button type="button" class="archive-editor-btn" onclick="formatArchiveBody('removeFormat')">서식 지우기</button>
+            </div>
+            <div class="archive-editor" id="archiveBodyEditor" contenteditable="true" data-placeholder="여기에 긴 일기, ChatGPT와 나눈 대화 요약, 상담에서 얻은 깨달음, 독서/명상 후 생각 등을 길게 적어줘."></div>
+            <p class="small-help">본문은 길게 써도 됨. 자동 채우기는 진짜 AI는 아니고, 본문에서 중요해 보이는 단어와 문장을 골라주는 기능이야.</p>
+          </div>
+
+          <div class="archive-actions">
+            <button class="btn-secondary" onclick="autoFillArchiveFields()">본문에서 자동 채우기</button>
+          </div>
+
+          <div class="form-row" style="margin-top: 16px;">
+            <label class="form-label">중요 문장</label>
+            <textarea class="input-field archive-small-textarea" id="archiveQuoteInput" placeholder="나중에 다시 보고 싶은 문장. 직접 적어도 되고, 자동 채우기로 비워둬도 됨."></textarea>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">요약</label>
+            <textarea class="input-field archive-small-textarea" id="archiveSummaryInput" placeholder="이 기록을 나중에 한눈에 이해할 수 있게 2~3줄로 정리."></textarea>
+          </div>
+
+          <div class="form-row">
+            <label class="form-label">키워드</label>
+            <input class="input-field" id="archiveKeywordsInput" type="text" placeholder="예: 완벽주의, 회복, 작업, 명상">
+            <p class="small-help">쉼표나 #으로 구분해도 됨. 예: #완벽주의 #회복 #몸</p>
+          </div>
+
+          <div class="archive-actions">
+            <button class="btn-primary" id="archiveSaveBtn" onclick="saveArchiveEntry()">기록 저장</button>
+            <button class="btn-secondary" onclick="resetArchiveForm(false)">입력칸 비우기</button>
+            <button class="btn-secondary" onclick="toggleArchiveForm(false)">닫기</button>
+          </div>
+        </div>
+
         <div class="archive-dashboard">
           <div class="card">
             <h3>📌 요약 보드</h3>
@@ -1086,64 +1318,29 @@
           </div>
         </div>
 
-        <div class="card">
-          <h3>✍️ 새 기록 쓰기</h3>
-          <div class="archive-form-grid">
-            <div class="form-row">
-              <label class="form-label">제목</label>
-              <input class="input-field" id="archiveTitleInput" type="text" placeholder="예: 무너짐이 있었지만 내가 무너짐 자체는 아니다">
+        <div class="card archive-calendar-card">
+          <div class="archive-calendar-header">
+            <div>
+              <h3>🗓️ 기록 달력</h3>
+              <p class="small-help">기록이 있는 날짜에 숫자가 떠. 날짜를 누르면 그날 기록만 보여.</p>
             </div>
-            <div class="form-row">
-              <label class="form-label">분류</label>
-              <select class="input-field" id="archiveCategoryInput">
-                <option>일기</option>
-                <option>대화</option>
-                <option>깨달음</option>
-                <option>실험</option>
-                <option>작업</option>
-                <option>관계</option>
-                <option>진로</option>
-                <option>마음</option>
-                <option>독서</option>
-                <option>명상</option>
-              </select>
+            <div class="archive-calendar-nav">
+              <button class="archive-mini-btn" onclick="moveArchiveCalendar(-1)">‹ 이전 달</button>
+              <span class="archive-calendar-title" id="archiveCalendarTitle">0000년 00월</span>
+              <button class="archive-mini-btn" onclick="moveArchiveCalendar(1)">다음 달 ›</button>
+              <button class="archive-mini-btn" onclick="clearArchiveSelectedDate()">전체 보기</button>
             </div>
           </div>
-
-          <div class="form-row">
-            <label class="form-label">본문</label>
-            <textarea class="input-field archive-textarea" id="archiveBodyInput" placeholder="여기에 긴 일기, ChatGPT와 나눈 대화 요약, 상담에서 얻은 깨달음, 독서/명상 후 생각 등을 길게 적어줘."></textarea>
-            <p class="small-help">본문은 길게 써도 됨. 아래 버튼은 진짜 AI는 아니고, 본문에서 중요해 보이는 단어와 문장을 자동으로 골라주는 기능이야.</p>
-          </div>
-
-          <div class="archive-actions">
-            <button class="btn-secondary" onclick="autoFillArchiveFields()">본문에서 자동 채우기</button>
-          </div>
-
-          <div class="form-row" style="margin-top: 16px;">
-            <label class="form-label">중요 문장</label>
-            <textarea class="input-field archive-small-textarea" id="archiveQuoteInput" placeholder="나중에 다시 보고 싶은 문장. 직접 적어도 되고, 자동 채우기로 비워둬도 됨."></textarea>
-          </div>
-
-          <div class="form-row">
-            <label class="form-label">요약</label>
-            <textarea class="input-field archive-small-textarea" id="archiveSummaryInput" placeholder="이 기록을 나중에 한눈에 이해할 수 있게 2~3줄로 정리."></textarea>
-          </div>
-
-          <div class="form-row">
-            <label class="form-label">키워드</label>
-            <input class="input-field" id="archiveKeywordsInput" type="text" placeholder="예: 완벽주의, 회복, 작업, 명상">
-            <p class="small-help">쉼표나 #으로 구분해도 됨. 예: #완벽주의 #회복 #몸</p>
-          </div>
-
-          <div class="archive-actions">
-            <button class="btn-primary" id="archiveSaveBtn" onclick="saveArchiveEntry()">기록 저장</button>
-            <button class="btn-secondary" onclick="resetArchiveForm()">입력칸 비우기</button>
-          </div>
+          <div class="archive-calendar-grid" id="archiveCalendarGrid"></div>
         </div>
 
         <div class="card">
-          <h3>📚 쌓인 기록</h3>
+          <div class="archive-section-head" style="margin-bottom: 14px;">
+            <div>
+              <h3 id="archiveListTitle">📚 최근 기록</h3>
+              <p id="archiveSelectedDateText">전체 기록을 보드 형태로 보여주는 중.</p>
+            </div>
+          </div>
           <div class="archive-toolbar">
             <input class="input-field" id="archiveSearchInput" type="text" placeholder="제목, 본문, 키워드 검색" oninput="setArchiveSearch(this.value)">
             <select class="input-field archive-select" id="archiveCategoryFilter" onchange="setArchiveCategoryFilter(this.value)">
@@ -1747,6 +1944,8 @@
     var editingArchiveId = null;
     var archiveCategoryFilter = 'all';
     var archiveSearchText = '';
+    var archiveSelectedDate = null;
+    var archiveCalendarDate = new Date();
 
     var archiveDonutColors = ['#4f8ef7', '#8f7cf6', '#f6a64f', '#4fc3a1', '#f66f8f', '#d8dce6'];
 
@@ -1769,39 +1968,64 @@
       localStorage.setItem('hwaThoughtArchive', JSON.stringify(archiveEntries));
     }
 
+    function toggleArchiveForm(forceOpen) {
+      const panel = document.getElementById('archiveWritePanel');
+      const btn = document.getElementById('archiveWriteToggleBtn');
+      if (!panel) return;
+      const isOpen = panel.classList.contains('open');
+      const next = typeof forceOpen === 'boolean' ? forceOpen : !isOpen;
+      panel.classList.toggle('open', next);
+      if (btn) btn.textContent = next ? '글쓰기 닫기' : '+ 새 기록 쓰기';
+      if (next) {
+        setTimeout(function() {
+          const title = document.getElementById('archiveTitleInput');
+          const editor = document.getElementById('archiveBodyEditor');
+          if (title && !title.value.trim()) title.focus();
+          else if (editor) editor.focus();
+        }, 50);
+      }
+    }
+
     function saveArchiveEntry() {
       const titleInput = document.getElementById('archiveTitleInput');
       const categoryInput = document.getElementById('archiveCategoryInput');
-      const bodyInput = document.getElementById('archiveBodyInput');
       const quoteInput = document.getElementById('archiveQuoteInput');
       const summaryInput = document.getElementById('archiveSummaryInput');
       const keywordsInput = document.getElementById('archiveKeywordsInput');
 
-      if (!bodyInput || !bodyInput.value.trim()) {
+      const bodyText = getArchiveBodyText();
+      const bodyHtml = getArchiveBodyHtml();
+
+      if (!bodyText.trim()) {
         showToast('✍️ 본문을 먼저 적어줘');
-        if (bodyInput) bodyInput.focus();
+        const editor = document.getElementById('archiveBodyEditor');
+        if (editor) editor.focus();
         return;
       }
 
       const now = new Date().toISOString();
       const parsedKeywords = parseArchiveKeywords(keywordsInput.value);
       const entryData = {
-        title: titleInput.value.trim() || makeArchiveTitleFromBody(bodyInput.value),
+        title: titleInput.value.trim() || makeArchiveTitleFromBody(bodyText),
         category: categoryInput.value || '일기',
-        body: bodyInput.value.trim(),
+        body: bodyText.trim(),
+        bodyHtml: bodyHtml || escapeHtml(bodyText).replace(/\n/g, '<br>'),
         quote: quoteInput.value.trim(),
         summary: summaryInput.value.trim(),
         keywords: parsedKeywords,
         updatedAt: now
       };
 
+      let savedDateKey = null;
       if (editingArchiveId) {
         archiveEntries = archiveEntries.map(function(entry) {
           if (entry.id !== editingArchiveId) return entry;
+          savedDateKey = getArchiveDateKey(entry.createdAt || now);
           return Object.assign({}, entry, entryData);
         });
         showToast('📝 기록을 수정했어');
       } else {
+        savedDateKey = getArchiveDateKey(now);
         archiveEntries.unshift(Object.assign({
           id: Date.now(),
           createdAt: now
@@ -1809,22 +2033,28 @@
         showToast('🗂️ 생각 아카이브에 저장했어');
       }
 
+      archiveSelectedDate = savedDateKey;
+      archiveCalendarDate = savedDateKey ? new Date(savedDateKey + 'T00:00:00') : new Date();
       saveArchiveEntries();
-      resetArchiveForm();
+      resetArchiveForm(true);
       renderArchivePage();
     }
 
-    function resetArchiveForm() {
-      const ids = ['archiveTitleInput', 'archiveBodyInput', 'archiveQuoteInput', 'archiveSummaryInput', 'archiveKeywordsInput'];
+    function resetArchiveForm(closeAfter) {
+      const ids = ['archiveTitleInput', 'archiveQuoteInput', 'archiveSummaryInput', 'archiveKeywordsInput'];
       ids.forEach(function(id) {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
+      setArchiveBodyEditor('', true);
       const category = document.getElementById('archiveCategoryInput');
       if (category) category.value = '일기';
       editingArchiveId = null;
       const btn = document.getElementById('archiveSaveBtn');
       if (btn) btn.textContent = '기록 저장';
+      const title = document.getElementById('archiveFormTitle');
+      if (title) title.textContent = '✍️ 새 기록 쓰기';
+      if (closeAfter) toggleArchiveForm(false);
     }
 
     function editArchiveEntry(id) {
@@ -1834,16 +2064,19 @@
       editingArchiveId = id;
       setValue('archiveTitleInput', entry.title || '');
       setValue('archiveCategoryInput', entry.category || '일기');
-      setValue('archiveBodyInput', entry.body || '');
+      setArchiveBodyEditor(getArchiveEntryBodyHtml(entry), true);
       setValue('archiveQuoteInput', entry.quote || '');
       setValue('archiveSummaryInput', entry.summary || '');
       setValue('archiveKeywordsInput', (entry.keywords || []).join(', '));
 
       const btn = document.getElementById('archiveSaveBtn');
       if (btn) btn.textContent = '수정 저장';
+      const title = document.getElementById('archiveFormTitle');
+      if (title) title.textContent = '✍️ 기록 수정하기';
 
-      const page = document.getElementById('archivePage');
-      if (page) page.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toggleArchiveForm(true);
+      const panel = document.getElementById('archiveWritePanel');
+      if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
       showToast('✍️ 수정 모드로 불러왔어');
     }
 
@@ -1864,14 +2097,14 @@
     }
 
     function autoFillArchiveFields() {
-      const bodyEl = document.getElementById('archiveBodyInput');
-      if (!bodyEl || !bodyEl.value.trim()) {
+      const body = getArchiveBodyText();
+      if (!body.trim()) {
         showToast('본문을 먼저 적어줘. 그래야 골라줌.');
-        if (bodyEl) bodyEl.focus();
+        const editor = document.getElementById('archiveBodyEditor');
+        if (editor) editor.focus();
         return;
       }
 
-      const body = bodyEl.value.trim();
       const titleEl = document.getElementById('archiveTitleInput');
       const quoteEl = document.getElementById('archiveQuoteInput');
       const summaryEl = document.getElementById('archiveSummaryInput');
@@ -1883,6 +2116,69 @@
       if (keywordsEl && !keywordsEl.value.trim()) keywordsEl.value = extractArchiveKeywords(body).join(', ');
 
       showToast('✨ 빈 칸 위주로 자동 채웠어. 맘에 안 들면 고치면 됨.');
+    }
+
+    function formatArchiveBody(command, value) {
+      const editor = document.getElementById('archiveBodyEditor');
+      if (!editor) return;
+      editor.focus();
+      try {
+        if (command === 'formatBlock') {
+          document.execCommand('formatBlock', false, value);
+        } else {
+          document.execCommand(command, false, value || null);
+        }
+      } catch (error) {
+        showToast('⚠️ 이 서식은 브라우저에서 지원이 약한가 봐');
+      }
+    }
+
+    function getArchiveBodyText() {
+      const editor = document.getElementById('archiveBodyEditor');
+      if (!editor) return '';
+      return editor.innerText.replace(/\u00a0/g, ' ').trim();
+    }
+
+    function getArchiveBodyHtml() {
+      const editor = document.getElementById('archiveBodyEditor');
+      if (!editor) return '';
+      return sanitizeArchiveHtml(editor.innerHTML || '').trim();
+    }
+
+    function setArchiveBodyEditor(content, isHtml) {
+      const editor = document.getElementById('archiveBodyEditor');
+      if (!editor) return;
+      if (!content) {
+        editor.innerHTML = '';
+        return;
+      }
+      editor.innerHTML = isHtml ? sanitizeArchiveHtml(content) : escapeHtml(content).replace(/\n/g, '<br>');
+    }
+
+    function sanitizeArchiveHtml(html) {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = html || '';
+      const allowed = ['B', 'STRONG', 'I', 'EM', 'U', 'P', 'DIV', 'BR', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'H2', 'H3', 'HR'];
+
+      function clean(node) {
+        if (node.nodeType === Node.TEXT_NODE) return document.createTextNode(node.textContent || '');
+        if (node.nodeType !== Node.ELEMENT_NODE) return document.createTextNode('');
+
+        const tag = node.tagName.toUpperCase();
+        if (allowed.indexOf(tag) === -1) {
+          const frag = document.createDocumentFragment();
+          Array.from(node.childNodes).forEach(function(child) { frag.appendChild(clean(child)); });
+          return frag;
+        }
+
+        const el = document.createElement(tag.toLowerCase());
+        Array.from(node.childNodes).forEach(function(child) { el.appendChild(clean(child)); });
+        return el;
+      }
+
+      const result = document.createElement('div');
+      Array.from(wrapper.childNodes).forEach(function(child) { result.appendChild(clean(child)); });
+      return result.innerHTML;
     }
 
     function makeArchiveTitleFromBody(body) {
@@ -1981,6 +2277,7 @@
 
     function renderArchivePage() {
       renderArchiveDashboard();
+      renderArchiveCalendar();
       renderArchiveList();
     }
 
@@ -2059,6 +2356,68 @@
       return counts;
     }
 
+    function renderArchiveCalendar() {
+      const grid = document.getElementById('archiveCalendarGrid');
+      const title = document.getElementById('archiveCalendarTitle');
+      if (!grid) return;
+
+      const y = archiveCalendarDate.getFullYear();
+      const m = archiveCalendarDate.getMonth();
+      if (title) title.textContent = y + '년 ' + String(m + 1).padStart(2, '0') + '월';
+
+      const counts = {};
+      archiveEntries.forEach(function(entry) {
+        const key = getArchiveDateKey(entry.createdAt);
+        if (!key) return;
+        counts[key] = (counts[key] || 0) + 1;
+      });
+
+      const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+      let html = weekdays.map(function(day) { return '<div class="archive-weekday">' + day + '</div>'; }).join('');
+
+      const firstDay = new Date(y, m, 1).getDay();
+      const lastDate = new Date(y, m + 1, 0).getDate();
+      for (let i = 0; i < firstDay; i++) html += '<div class="archive-calendar-cell empty"></div>';
+
+      const todayKey = getArchiveDateKey(new Date());
+      for (let day = 1; day <= lastDate; day++) {
+        const date = new Date(y, m, day);
+        const key = getArchiveDateKey(date);
+        const count = counts[key] || 0;
+        const classes = [
+          'archive-calendar-cell',
+          count ? 'has-entry' : '',
+          key === todayKey ? 'today' : '',
+          key === archiveSelectedDate ? 'selected' : ''
+        ].filter(Boolean).join(' ');
+        html += '<button type="button" class="' + classes + '" onclick="selectArchiveDate(\'' + key + '\')">' +
+          '<span class="archive-day-number">' + day + '</span>' +
+          (count ? '<span class="archive-day-count">' + count + '</span>' : '') +
+          '</button>';
+      }
+
+      grid.innerHTML = html;
+    }
+
+    function moveArchiveCalendar(delta) {
+      archiveCalendarDate = new Date(archiveCalendarDate.getFullYear(), archiveCalendarDate.getMonth() + delta, 1);
+      renderArchiveCalendar();
+    }
+
+    function selectArchiveDate(dateKey) {
+      archiveSelectedDate = dateKey;
+      const d = new Date(dateKey + 'T00:00:00');
+      if (!isNaN(d.getTime())) archiveCalendarDate = d;
+      renderArchiveCalendar();
+      renderArchiveList();
+    }
+
+    function clearArchiveSelectedDate() {
+      archiveSelectedDate = null;
+      renderArchiveCalendar();
+      renderArchiveList();
+    }
+
     function renderArchiveList() {
       const list = document.getElementById('archiveList');
       if (!list) return;
@@ -2067,12 +2426,15 @@
       const filtered = archiveEntries.filter(function(entry) {
         const categoryOk = archiveCategoryFilter === 'all' || entry.category === archiveCategoryFilter;
         if (!categoryOk) return false;
+        if (archiveSelectedDate && getArchiveDateKey(entry.createdAt) !== archiveSelectedDate) return false;
         if (!q) return true;
-        const searchable = [entry.title, entry.category, entry.body, entry.quote, entry.summary, (entry.keywords || []).join(' ')]
+        const searchable = [entry.title, entry.category, entry.body, stripHtml(entry.bodyHtml || ''), entry.quote, entry.summary, (entry.keywords || []).join(' ')]
           .join(' ')
           .toLowerCase();
         return searchable.indexOf(q) !== -1;
       });
+
+      updateArchiveListHeader(filtered.length);
 
       if (filtered.length === 0) {
         list.innerHTML = '<p class="empty-state">조건에 맞는 기록이 없어.</p>';
@@ -2084,6 +2446,7 @@
           return '<span class="archive-tag">#' + escapeHtml(keyword) + '</span>';
         }).join('');
         const bodyId = 'archiveBody' + entry.id;
+        const bodyHtml = getArchiveEntryBodyHtml(entry);
         return '' +
           '<div class="archive-entry-card">' +
             '<div class="archive-entry-top">' +
@@ -2094,11 +2457,11 @@
               '<span class="archive-category-badge">' + escapeHtml(entry.category || '일기') + '</span>' +
             '</div>' +
             (entry.quote ? '<div class="archive-quote">“' + escapeHtml(entry.quote) + '”</div>' : '') +
-            (entry.summary ? '<div class="archive-summary">' + escapeHtml(entry.summary) + '</div>' : '<div class="archive-summary">' + escapeHtml(truncateText(entry.body || '', 140)) + '</div>') +
+            (entry.summary ? '<div class="archive-summary">' + escapeHtml(entry.summary) + '</div>' : '<div class="archive-summary">' + escapeHtml(truncateText(entry.body || stripHtml(bodyHtml) || '', 120)) + '</div>') +
             (keywords ? '<div class="archive-tags">' + keywords + '</div>' : '') +
-            '<div class="archive-body-full" id="' + bodyId + '">' + escapeHtml(entry.body || '') + '</div>' +
+            '<div class="archive-body-full" id="' + bodyId + '">' + bodyHtml + '</div>' +
             '<div class="archive-card-actions">' +
-              '<button class="archive-mini-btn" onclick="toggleArchiveBody(\'' + bodyId + '\', this)">본문 펼치기</button>' +
+              '<button class="archive-mini-btn" onclick="toggleArchiveBody(\'' + bodyId + '\', this)">본문 보기</button>' +
               '<button class="archive-mini-btn" onclick="editArchiveEntry(' + entry.id + ')">수정</button>' +
               '<button class="archive-mini-btn danger" onclick="deleteArchiveEntry(' + entry.id + ')">삭제</button>' +
             '</div>' +
@@ -2106,12 +2469,38 @@
       }).join('');
     }
 
+    function updateArchiveListHeader(count) {
+      const title = document.getElementById('archiveListTitle');
+      const text = document.getElementById('archiveSelectedDateText');
+      if (!title || !text) return;
+
+      if (archiveSelectedDate) {
+        title.textContent = '📚 선택한 날짜의 기록';
+        text.textContent = formatArchiveDate(archiveSelectedDate) + ' · ' + count + '개 기록을 보여주는 중.';
+      } else {
+        title.textContent = '📚 최근 기록';
+        text.textContent = '전체 기록 중 조건에 맞는 ' + count + '개를 보드 형태로 보여주는 중.';
+      }
+    }
+
+    function getArchiveEntryBodyHtml(entry) {
+      if (!entry) return '';
+      if (entry.bodyHtml) return sanitizeArchiveHtml(entry.bodyHtml);
+      return escapeHtml(entry.body || '').replace(/\n/g, '<br>');
+    }
+
+    function stripHtml(html) {
+      const div = document.createElement('div');
+      div.innerHTML = html || '';
+      return div.innerText || div.textContent || '';
+    }
+
     function toggleArchiveBody(bodyId, btn) {
       const body = document.getElementById(bodyId);
       if (!body) return;
       const isOpen = body.style.display === 'block';
       body.style.display = isOpen ? 'none' : 'block';
-      if (btn) btn.textContent = isOpen ? '본문 펼치기' : '본문 접기';
+      if (btn) btn.textContent = isOpen ? '본문 보기' : '본문 접기';
     }
 
     function setArchiveSearch(value) {
@@ -2131,8 +2520,14 @@
       return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
     }
 
-    function formatArchiveDate(iso) {
-      const d = iso ? new Date(iso) : new Date();
+    function getArchiveDateKey(value) {
+      const d = value instanceof Date ? value : new Date(value);
+      if (isNaN(d.getTime())) return '';
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    function formatArchiveDate(isoOrKey) {
+      const d = isoOrKey ? new Date(String(isoOrKey).length === 10 ? isoOrKey + 'T00:00:00' : isoOrKey) : new Date();
       if (isNaN(d.getTime())) return '';
       return d.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
     }
