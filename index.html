@@ -654,116 +654,6 @@
       margin-top: 8px;
     }
 
-    /* ===================================================
-       프로젝트 보드
-       =================================================== */
-    .project-summary-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .project-form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-    }
-
-    .project-description {
-      min-height: 92px;
-      resize: vertical;
-      line-height: 1.65;
-    }
-
-    .project-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 12px;
-    }
-
-    .project-card {
-      background: #fff;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .project-card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .project-title {
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1.45;
-      word-break: break-word;
-    }
-
-    .project-desc {
-      color: var(--text-secondary);
-      font-size: 13px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .project-badges,
-    .project-counts,
-    .project-actions {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .project-linked-list {
-      display: none;
-      border-top: 1px solid var(--border-color);
-      padding-top: 12px;
-    }
-
-    .project-linked-list.open { display: block; }
-
-    .project-task-row {
-      background: var(--bg-main);
-      border-radius: 10px;
-      padding: 10px 12px;
-      margin-top: 8px;
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.65;
-    }
-
-    .project-task-title {
-      color: var(--text-primary);
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 4px;
-      word-break: break-word;
-    }
-
-    .project-progress-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      align-items: center;
-      color: var(--text-secondary);
-      font-size: 12px;
-    }
-
-    @media (max-width: 768px) {
-      .project-list { grid-template-columns: 1fr; }
-      .project-card-top { flex-direction: column; }
-      .project-actions .archive-mini-btn { flex: 1; }
-    }
-
     @media (max-width: 768px) {
       .stats-grid { grid-template-columns: 1fr; }
       .task-input-row { flex-direction: column; }
@@ -1305,7 +1195,6 @@
         <button class="nav-item active" onclick="showPage('homePage', this, '🏠 홈')">🏠 홈</button>
         <button class="nav-item" onclick="showPage('taskPage', this, '📝 오늘 뭐하지')">📝 오늘 뭐하지</button>
         <button class="nav-item" onclick="showPage('archivePage', this, '🗂️ 생각 아카이브')">🗂️ 생각 아카이브</button>
-        <button class="nav-item" onclick="showPage('projectPage', this, '📌 프로젝트 보드'); renderProjectPage();">📌 프로젝트 보드</button>
         <button class="nav-item" onclick="showPage('devStudyPage', this, '📓 개발괴발 공부하기'); loadDevStudyPage();">📓 개발괴발 공부하기</button>
         <button class="nav-item" onclick="showPage('settingsPage', this, '⚙️ 설정')">⚙️ 설정</button>
       </nav>
@@ -1451,8 +1340,7 @@
             </div>
             <div class="form-row">
               <label class="form-label">연결 프로젝트 <span style="color:var(--text-tertiary);font-weight:400;">선택</span></label>
-              <input class="input-field" id="taskProjectInput" type="text" list="projectNameOptions" placeholder="프로젝트를 선택하거나 직접 입력">
-              <datalist id="projectNameOptions"></datalist>
+              <input class="input-field" id="taskProjectInput" type="text" placeholder="예: 취업 포트폴리오, 웹앱 만들기">
             </div>
           </div>
           <p class="small-help">제목만 적어도 저장됨. 나머지는 쓸 힘 있을 때만 적자. 앱이 숙제 내면 안 됨.</p>
@@ -1633,94 +1521,6 @@
           </div>
           <div class="archive-list" id="archiveList">
             <p class="empty-state">아직 기록이 없어. 첫 기록을 하나 남겨보자.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 프로젝트 보드 페이지 -->
-      <div id="projectPage" class="page">
-        <div class="page-header">
-          <h2>📌 프로젝트 보드</h2>
-          <p>장기/중기/단기 프로젝트와 연결된 할 일을 한곳에서 보는 보드</p>
-        </div>
-
-        <div class="project-summary-grid" id="projectSummaryGrid"></div>
-
-        <div class="card">
-          <h3 id="projectFormTitle">✍️ 프로젝트 등록</h3>
-          <div class="project-form-grid">
-            <div class="form-row">
-              <label class="form-label">프로젝트명</label>
-              <input class="input-field" id="projectNameInput" type="text" placeholder="예: 취업 포트폴리오">
-            </div>
-            <div class="form-row">
-              <label class="form-label">기간 구분</label>
-              <select class="input-field" id="projectTermInput">
-                <option>장기</option>
-                <option>중기</option>
-                <option selected>단기</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label class="form-label">영역</label>
-              <select class="input-field" id="projectAreaInput">
-                <option>디자인</option>
-                <option>커리어</option>
-                <option>학업</option>
-                <option>루틴</option>
-                <option>마음</option>
-                <option>독서</option>
-                <option>명상</option>
-                <option>기타</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label class="form-label">시작일</label>
-              <input class="input-field" id="projectStartInput" type="date">
-            </div>
-            <div class="form-row">
-              <label class="form-label">목표일</label>
-              <input class="input-field" id="projectTargetInput" type="date">
-            </div>
-            <div class="form-row">
-              <label class="form-label">상태</label>
-              <select class="input-field" id="projectStatusInput">
-                <option selected>진행 중</option>
-                <option>잠시 멈춤</option>
-                <option>완료</option>
-                <option>보류</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row">
-            <label class="form-label">설명</label>
-            <textarea class="input-field project-description" id="projectDescriptionInput" placeholder="이 프로젝트를 왜 하는지, 어디까지 가면 충분한지 적어줘."></textarea>
-          </div>
-          <div class="task-form-actions">
-            <button class="btn-primary" id="projectSaveBtn" onclick="saveProject()">프로젝트 저장</button>
-            <button class="btn-secondary" onclick="resetProjectForm()">입력칸 비우기</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="archive-section-head" style="margin-bottom: 14px;">
-            <div>
-              <h3>🗂️ 프로젝트 목록</h3>
-              <p id="projectFilterText">전체 프로젝트를 보여주는 중.</p>
-            </div>
-          </div>
-          <div class="task-filter-row">
-            <button class="filter-btn active" onclick="setProjectFilter('전체', this)">전체</button>
-            <button class="filter-btn" onclick="setProjectFilter('장기', this)">장기</button>
-            <button class="filter-btn" onclick="setProjectFilter('중기', this)">중기</button>
-            <button class="filter-btn" onclick="setProjectFilter('단기', this)">단기</button>
-            <button class="filter-btn" onclick="setProjectFilter('진행 중', this)">진행 중</button>
-            <button class="filter-btn" onclick="setProjectFilter('잠시 멈춤', this)">잠시 멈춤</button>
-            <button class="filter-btn" onclick="setProjectFilter('완료', this)">완료</button>
-            <button class="filter-btn" onclick="setProjectFilter('보류', this)">보류</button>
-          </div>
-          <div class="project-list" id="projectList">
-            <p class="empty-state">아직 프로젝트가 없어. 하나만 등록해보자.</p>
           </div>
         </div>
       </div>
@@ -2074,7 +1874,6 @@
     const HWA_DATA_KEYS = [
       'hwaTasks',
       'hwaThoughtArchive',
-      'hwaProjects',
       'hwaProfile',
       'hwaDesign',
       'vibedev_done',
@@ -2095,8 +1894,7 @@
         storage: storageData,
         preview: {
           taskCount: Array.isArray(tasks) ? tasks.length : 0,
-          archiveCount: Array.isArray(archiveEntries) ? archiveEntries.length : 0,
-          projectCount: Array.isArray(projects) ? projects.length : 0
+          archiveCount: Array.isArray(archiveEntries) ? archiveEntries.length : 0
         }
       };
 
@@ -2175,9 +1973,6 @@
       if (!storageData.hwaThoughtArchive && Array.isArray(data.archiveEntries)) {
         localStorage.setItem('hwaThoughtArchive', JSON.stringify(data.archiveEntries));
       }
-      if (!storageData.hwaProjects && Array.isArray(data.projects)) {
-        localStorage.setItem('hwaProjects', JSON.stringify(data.projects));
-      }
       if (!storageData.hwaProfile && data.profileData && typeof data.profileData === 'object') {
         localStorage.setItem('hwaProfile', JSON.stringify(data.profileData));
       }
@@ -2191,12 +1986,9 @@
       applyProfile();
       applyDesign();
       loadTasks();
-      loadProjects();
       initTaskFormDefaults();
       renderTaskPage();
       renderHomeSummary();
-      renderProjectPage();
-      renderProjectOptions();
       loadArchiveEntries();
       renderArchivePage();
     }
@@ -2209,7 +2001,6 @@
           HWA_DATA_KEYS.forEach(function(key) { localStorage.removeItem(key); });
           tasks = [];
           archiveEntries = [];
-          projects = [];
           profileData = { name: '', quote: '', photo: '' };
           reloadAppDataFromStorage();
           showToast('🗑 데이터가 초기화됐어');
@@ -2226,10 +2017,6 @@
     var taskSelectedDate = getDateKey(new Date());
     var taskCalendarDate = new Date();
     var taskReviewTargetId = null;
-
-    var projects = [];
-    var editingProjectId = null;
-    var currentProjectFilter = '전체';
 
     // 한국어 입력기(IME) 조합 상태를 기억하는 변수들.
     // 예: '명상하기'를 입력하고 Enter를 누를 때 마지막 글자 '기'가 따로 추가되는 문제를 막기 위해 사용해.
@@ -2312,7 +2099,6 @@
       saveTasks();
       renderTaskPage();
       renderHomeSummary();
-      renderProjectPage();
       showToast('📝 오늘 뭐하지에 추가했어');
       input.focus();
 
@@ -2367,7 +2153,6 @@
       saveTasks();
       renderTaskPage();
       renderHomeSummary();
-      renderProjectPage();
 
       if (willComplete) {
         showToast(getRandomCelebration());
@@ -2409,7 +2194,6 @@
       saveTasks();
       renderTaskPage();
       renderHomeSummary();
-      renderProjectPage();
       closeTaskReviewModal();
       showToast('📌 완료 기록까지 저장했어');
     }
@@ -2426,7 +2210,6 @@
           saveTasks();
           renderTaskPage();
           renderHomeSummary();
-          renderProjectPage();
           showToast('🧹 없던 일로 정리했어');
         }
       );
@@ -2762,292 +2545,6 @@
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
-    }
-
-
-    // =====================================================
-    // 프로젝트 보드
-    // =====================================================
-
-    function loadProjects() {
-      const saved = localStorage.getItem('hwaProjects');
-      if (!saved) {
-        projects = [];
-        return;
-      }
-
-      try {
-        const parsed = JSON.parse(saved) || [];
-        projects = parsed.map(normalizeProject);
-      } catch (error) {
-        projects = [];
-        showToast('⚠️ 프로젝트를 불러오지 못했어');
-      }
-    }
-
-    function saveProjects() {
-      localStorage.setItem('hwaProjects', JSON.stringify(projects));
-      renderProjectOptions();
-    }
-
-    function normalizeProject(project) {
-      const now = new Date().toISOString();
-      return Object.assign({}, project, {
-        id: project.id || Date.now() + Math.floor(Math.random() * 1000),
-        name: project.name || project.title || '',
-        term: project.term || '단기',
-        area: project.area || '기타',
-        startDate: project.startDate || '',
-        targetDate: project.targetDate || '',
-        status: project.status || '진행 중',
-        description: project.description || '',
-        createdAt: project.createdAt || now,
-        updatedAt: project.updatedAt || now
-      });
-    }
-
-    function saveProject() {
-      const nameInput = document.getElementById('projectNameInput');
-      const name = nameInput ? nameInput.value.trim() : '';
-      if (!name) {
-        showToast('프로젝트명을 먼저 적어줘');
-        if (nameInput) nameInput.focus();
-        return;
-      }
-
-      const now = new Date().toISOString();
-      const projectData = {
-        name: name,
-        term: getInputValue('projectTermInput', '단기'),
-        area: getInputValue('projectAreaInput', '기타'),
-        startDate: getInputValue('projectStartInput', ''),
-        targetDate: getInputValue('projectTargetInput', ''),
-        status: getInputValue('projectStatusInput', '진행 중'),
-        description: getInputValue('projectDescriptionInput', ''),
-        updatedAt: now
-      };
-
-      if (editingProjectId) {
-        projects = projects.map(function(project) {
-          if (project.id !== editingProjectId) return project;
-          return normalizeProject(Object.assign({}, project, projectData));
-        });
-        showToast('📌 프로젝트를 수정했어');
-      } else {
-        projects.unshift(normalizeProject(Object.assign({
-          id: Date.now(),
-          createdAt: now
-        }, projectData)));
-        showToast('📌 프로젝트를 저장했어');
-      }
-
-      saveProjects();
-      resetProjectForm();
-      renderProjectPage();
-    }
-
-    function resetProjectForm() {
-      editingProjectId = null;
-      setValue('projectNameInput', '');
-      setValue('projectTermInput', '단기');
-      setValue('projectAreaInput', '디자인');
-      setValue('projectStartInput', '');
-      setValue('projectTargetInput', '');
-      setValue('projectStatusInput', '진행 중');
-      setValue('projectDescriptionInput', '');
-      setText('projectFormTitle', '✍️ 프로젝트 등록');
-      setText('projectSaveBtn', '프로젝트 저장');
-    }
-
-    function editProject(id) {
-      const project = projects.find(function(item) { return item.id === id; });
-      if (!project) return;
-      editingProjectId = id;
-      setValue('projectNameInput', project.name || '');
-      setValue('projectTermInput', project.term || '단기');
-      setValue('projectAreaInput', project.area || '기타');
-      setValue('projectStartInput', project.startDate || '');
-      setValue('projectTargetInput', project.targetDate || '');
-      setValue('projectStatusInput', project.status || '진행 중');
-      setValue('projectDescriptionInput', project.description || '');
-      setText('projectFormTitle', '✍️ 프로젝트 수정');
-      setText('projectSaveBtn', '수정 저장');
-      const form = document.getElementById('projectFormTitle');
-      if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      showToast('수정 모드로 불러왔어');
-    }
-
-    function deleteProject(id) {
-      const project = projects.find(function(item) { return item.id === id; });
-      const name = project ? project.name : '이 프로젝트';
-      openModal(
-        '프로젝트 삭제',
-        '“' + name + '” 프로젝트를 삭제할까? 연결된 할 일은 삭제되지 않아.',
-        function() {
-          projects = projects.filter(function(item) { return item.id !== id; });
-          saveProjects();
-          if (editingProjectId === id) resetProjectForm();
-          renderProjectPage();
-          showToast('프로젝트를 삭제했어');
-        }
-      );
-    }
-
-    function renderProjectPage() {
-      renderProjectSummary();
-      renderProjectOptions();
-      renderProjectList();
-    }
-
-    function renderProjectSummary() {
-      const wrap = document.getElementById('projectSummaryGrid');
-      if (!wrap) return;
-      const statusCount = countBy(projects, 'status');
-      const termCount = countBy(projects, 'term');
-      const cards = [
-        ['전체 프로젝트', projects.length],
-        ['진행 중', statusCount['진행 중'] || 0],
-        ['잠시 멈춤', statusCount['잠시 멈춤'] || 0],
-        ['완료', statusCount['완료'] || 0],
-        ['장기', termCount['장기'] || 0],
-        ['중기', termCount['중기'] || 0],
-        ['단기', termCount['단기'] || 0]
-      ];
-      wrap.innerHTML = cards.map(function(card) {
-        return '<div class="stat-card"><div class="stat-label">' + escapeHtml(card[0]) + '</div><div class="stat-number">' + card[1] + '</div></div>';
-      }).join('');
-    }
-
-    function renderProjectList() {
-      const list = document.getElementById('projectList');
-      if (!list) return;
-
-      const filtered = projects.filter(function(project) {
-        if (currentProjectFilter === '전체') return true;
-        return project.term === currentProjectFilter || project.status === currentProjectFilter;
-      });
-
-      setText('projectFilterText', currentProjectFilter === '전체'
-        ? '전체 프로젝트 ' + filtered.length + '개를 보여주는 중.'
-        : currentProjectFilter + ' 프로젝트 ' + filtered.length + '개를 보여주는 중.');
-
-      if (filtered.length === 0) {
-        list.innerHTML = '<p class="empty-state">조건에 맞는 프로젝트가 없어.</p>';
-        return;
-      }
-
-      list.innerHTML = filtered.map(function(project) {
-        const stats = getProjectTaskStats(project.name);
-        const linkedId = 'projectLinked' + project.id;
-        const desc = project.description ? truncateText(project.description, 120) : '설명이 아직 없어.';
-        return '' +
-          '<div class="project-card">' +
-            '<div class="project-card-top">' +
-              '<div>' +
-                '<div class="project-title">' + escapeHtml(project.name || '제목 없는 프로젝트') + '</div>' +
-                '<div class="project-badges" style="margin-top:8px;">' +
-                  '<span class="task-badge">' + escapeHtml(project.term || '단기') + '</span>' +
-                  '<span class="task-badge">' + escapeHtml(project.area || '기타') + '</span>' +
-                  '<span class="task-badge done-badge">' + escapeHtml(project.status || '진행 중') + '</span>' +
-                '</div>' +
-              '</div>' +
-            '</div>' +
-            '<div class="task-info-row">' +
-              '<span class="task-badge">시작 ' + escapeHtml(project.startDate || '미정') + '</span>' +
-              '<span class="task-badge">목표 ' + escapeHtml(project.targetDate || '미정') + '</span>' +
-            '</div>' +
-            '<p class="project-desc">' + escapeHtml(desc) + '</p>' +
-            '<div class="project-progress-row"><strong>진행률 ' + stats.percent + '%</strong><span>' + stats.done + ' / ' + stats.total + ' 완료</span></div>' +
-            '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:' + stats.percent + '%"></div></div>' +
-            '<div class="project-counts">' +
-              '<span class="task-badge">연결 ' + stats.total + '개</span>' +
-              '<span class="task-badge">완료 ' + stats.done + '개</span>' +
-              '<span class="task-badge">남은 ' + stats.left + '개</span>' +
-            '</div>' +
-            '<div class="project-actions">' +
-              '<button class="archive-mini-btn" onclick="toggleProjectTasks(&quot;' + linkedId + '&quot;, this)">연결된 할 일 보기</button>' +
-              '<button class="archive-mini-btn" onclick="editProject(' + project.id + ')">수정</button>' +
-              '<button class="archive-mini-btn danger" onclick="deleteProject(' + project.id + ')">삭제</button>' +
-            '</div>' +
-            '<div class="project-linked-list" id="' + linkedId + '">' + getLinkedProjectTasksHtml(stats.tasks) + '</div>' +
-          '</div>';
-      }).join('');
-    }
-
-    function setProjectFilter(filter, btn) {
-      currentProjectFilter = filter || '전체';
-      const row = btn && btn.parentElement ? btn.parentElement : null;
-      if (row) row.querySelectorAll('.filter-btn').forEach(function(button) { button.classList.remove('active'); });
-      if (btn) btn.classList.add('active');
-      renderProjectList();
-    }
-
-    function toggleProjectTasks(id, btn) {
-      const panel = document.getElementById(id);
-      if (!panel) return;
-      const next = !panel.classList.contains('open');
-      panel.classList.toggle('open', next);
-      if (btn) btn.textContent = next ? '연결된 할 일 접기' : '연결된 할 일 보기';
-    }
-
-    function getProjectTaskStats(projectName) {
-      const linked = tasks.filter(function(task) { return normalizeProjectName(task.project) === normalizeProjectName(projectName); });
-      const done = linked.filter(function(task) { return task.done; }).length;
-      const total = linked.length;
-      return {
-        tasks: linked,
-        total: total,
-        done: done,
-        left: total - done,
-        percent: total ? Math.round(done / total * 100) : 0
-      };
-    }
-
-    function getLinkedProjectTasksHtml(linkedTasks) {
-      if (!linkedTasks || linkedTasks.length === 0) {
-        return '<p class="empty-state" style="padding: 18px 0;">연결된 할 일이 아직 없어.</p>';
-      }
-      return linkedTasks.map(function(task) {
-        const details = [
-          '날짜 ' + (getTaskDateKey(task) || '미정'),
-          '항목 ' + (task.category || '기타'),
-          task.done ? '완료' : '미완료',
-          '중요도 ' + (taskImportanceLabels[task.importance || 'normal'] || '보통'),
-          '예상 난이도 ' + makeStars(task.expectedDifficulty),
-          '실행 후 난이도 ' + makeStars(task.actualDifficulty)
-        ];
-        return '<div class="project-task-row">' +
-          '<div class="project-task-title">' + escapeHtml(getTaskTitle(task)) + '</div>' +
-          '<div>' + details.map(escapeHtml).join(' · ') + '</div>' +
-          (task.completionComment ? '<div><strong>완료 코멘트</strong> ' + escapeHtml(task.completionComment) + '</div>' : '') +
-        '</div>';
-      }).join('');
-    }
-
-    function renderProjectOptions() {
-      const list = document.getElementById('projectNameOptions');
-      if (!list) return;
-      const names = projects.map(function(project) { return project.name; }).filter(Boolean);
-      list.innerHTML = names.map(function(name) {
-        return '<option value="' + escapeHtml(name) + '"></option>';
-      }).join('');
-    }
-
-    function countBy(items, key) {
-      return items.reduce(function(acc, item) {
-        const value = item[key] || '';
-        if (value) acc[value] = (acc[value] || 0) + 1;
-        return acc;
-      }, {});
-    }
-
-    function normalizeProjectName(value) {
-      return String(value || '').trim().toLowerCase();
-    }
-
-    function getInputValue(id, fallback) {
-      const el = document.getElementById(id);
-      return el ? el.value.trim() : fallback;
     }
 
 
@@ -3682,12 +3179,9 @@
       applyDesign();
       setupTaskInputCompositionGuard();
       loadTasks();
-      loadProjects();
       initTaskFormDefaults();
       renderTaskPage();
       renderHomeSummary();
-      renderProjectPage();
-      renderProjectOptions();
       loadArchiveEntries();
       renderArchivePage();
     });
