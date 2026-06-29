@@ -490,6 +490,22 @@
       margin-top: 8px;
     }
 
+    .task-edit-panel {
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--bg-main);
+    }
+
+    .task-edit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .task-edit-full { grid-column: 1 / -1; }
+
     .task-filter-row {
       display: flex;
       gap: 8px;
@@ -757,6 +773,16 @@
       color: var(--text-secondary);
       font-size: 12px;
     }
+
+    .project-board-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .project-form-card { display: none; }
+    .project-form-card.open { display: block; }
 
     @media (max-width: 768px) {
       .project-list { grid-template-columns: 1fr; }
@@ -1646,7 +1672,11 @@
 
         <div class="project-summary-grid" id="projectSummaryGrid"></div>
 
-        <div class="card">
+        <div class="project-board-actions">
+          <button class="btn-primary" id="projectFormToggleBtn" onclick="toggleProjectForm()">+ 프로젝트 등록</button>
+        </div>
+
+        <div class="card project-form-card" id="projectFormCard">
           <h3 id="projectFormTitle">✍️ 프로젝트 등록</h3>
           <div class="project-form-grid">
             <div class="form-row">
@@ -1699,6 +1729,7 @@
           <div class="task-form-actions">
             <button class="btn-primary" id="projectSaveBtn" onclick="saveProject()">프로젝트 저장</button>
             <button class="btn-secondary" onclick="resetProjectForm()">입력칸 비우기</button>
+            <button class="btn-secondary" onclick="closeProjectForm()">접기</button>
           </div>
         </div>
 
@@ -2226,10 +2257,12 @@
     var taskSelectedDate = getDateKey(new Date());
     var taskCalendarDate = new Date();
     var taskReviewTargetId = null;
+    var editingTaskId = null;
 
     var projects = [];
     var editingProjectId = null;
     var currentProjectFilter = '전체';
+    var isProjectFormOpen = false;
 
     // 한국어 입력기(IME) 조합 상태를 기억하는 변수들.
     // 예: '명상하기'를 입력하고 Enter를 누를 때 마지막 글자 '기'가 따로 추가되는 문제를 막기 위해 사용해.
@@ -2432,6 +2465,46 @@
       );
     }
 
+    function startEditTask(id) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+      editingTaskId = id;
+      renderTaskList();
+    }
+
+    function cancelEditTask() {
+      editingTaskId = null;
+      renderTaskList();
+    }
+
+    function saveEditedTask(id) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+
+      const text = getInputValue('taskEditText' + id, '').trim();
+      if (!text) {
+        showToast('할 일 내용을 비워둘 순 없어');
+        const input = document.getElementById('taskEditText' + id);
+        if (input) input.focus();
+        return;
+      }
+
+      task.text = text;
+      task.category = getInputValue('taskEditCategory' + id, task.category || '기타');
+      task.importance = getInputValue('taskEditImportance' + id, task.importance || 'normal');
+      task.expectedDifficulty = Number(getInputValue('taskEditExpectedDifficulty' + id, task.expectedDifficulty || 0));
+      task.estimatedTime = getInputValue('taskEditEstimatedTime' + id, task.estimatedTime || '잘 모르겠음');
+      task.project = getInputValue('taskEditProject' + id, task.project || '');
+      task.updatedAt = new Date().toISOString();
+
+      editingTaskId = null;
+      saveTasks();
+      renderTaskPage();
+      renderHomeSummary();
+      renderProjectPage();
+      showToast('할 일을 수정했어');
+    }
+
     function renderTaskPage() {
       renderTaskCalendar();
       renderTaskList();
@@ -2463,6 +2536,7 @@
       listEl.innerHTML = filteredTasks.map(task => {
         const safeText = escapeHtml(getTaskTitle(task));
         const doneClass = task.done ? ' done' : '';
+        const isEditing = editingTaskId === task.id;
         const statusBadge = task.done
           ? '<span class="task-badge done-badge">🏆 해낸 일</span>'
           : '<span class="task-badge">⏳ 기다리는 일</span>';
@@ -2481,12 +2555,84 @@
               '<div class="task-title">' + safeText + '</div>' +
               '<div class="task-meta">' + statusBadge + '</div>' +
               '<div class="task-info-row">' + infoBadges + '</div>' +
-              review +
+              (isEditing ? getTaskEditHtml(task) : review) +
             '</div>' +
-            '<div class="task-actions">' + actionBtn + reviewButton +
+            '<div class="task-actions">' +
+              (isEditing ? '' : actionBtn + reviewButton +
+              '<button class="task-action-btn task-undo-btn" onclick="startEditTask(' + task.id + ')">수정</button>') +
               '<button class="task-action-btn task-delete-btn" onclick="deleteTask(' + task.id + ')">삭제</button>' +
             '</div>' +
           '</div>';
+      }).join('');
+    }
+
+    function getTaskEditHtml(task) {
+      const id = task.id;
+      return '' +
+        '<div class="task-edit-panel">' +
+          '<div class="task-edit-grid">' +
+            '<div class="form-row task-edit-full">' +
+              '<label class="form-label">할 일 내용</label>' +
+              '<input class="input-field" id="taskEditText' + id + '" type="text" value="' + escapeHtml(getTaskTitle(task)) + '">' +
+            '</div>' +
+            '<div class="form-row">' +
+              '<label class="form-label">항목 구분</label>' +
+              '<select class="input-field" id="taskEditCategory' + id + '">' + getTaskCategoryOptions(task.category) + '</select>' +
+            '</div>' +
+            '<div class="form-row">' +
+              '<label class="form-label">중요도</label>' +
+              '<select class="input-field" id="taskEditImportance' + id + '">' + getTaskImportanceOptions(task.importance) + '</select>' +
+            '</div>' +
+            '<div class="form-row">' +
+              '<label class="form-label">예상 난이도</label>' +
+              '<select class="input-field" id="taskEditExpectedDifficulty' + id + '">' + getDifficultyOptions(task.expectedDifficulty) + '</select>' +
+            '</div>' +
+            '<div class="form-row">' +
+              '<label class="form-label">예상 소요 시간</label>' +
+              '<select class="input-field" id="taskEditEstimatedTime' + id + '">' + getEstimatedTimeOptions(task.estimatedTime) + '</select>' +
+            '</div>' +
+            '<div class="form-row task-edit-full">' +
+              '<label class="form-label">연결 프로젝트</label>' +
+              '<input class="input-field" id="taskEditProject' + id + '" type="text" list="projectNameOptions" value="' + escapeHtml(task.project || '') + '" placeholder="프로젝트를 선택하거나 직접 입력">' +
+            '</div>' +
+          '</div>' +
+          '<div class="task-form-actions">' +
+            '<button class="btn-primary" onclick="saveEditedTask(' + id + ')">수정 저장</button>' +
+            '<button class="btn-secondary" onclick="cancelEditTask()">취소</button>' +
+          '</div>' +
+        '</div>';
+    }
+
+    function getTaskCategoryOptions(selected) {
+      return ['사무', '디자인', '학업', '커리어', '루틴', '생활', '마음', '운동', '기타'].map(function(value) {
+        return '<option' + (value === selected ? ' selected' : '') + '>' + escapeHtml(value) + '</option>';
+      }).join('');
+    }
+
+    function getTaskImportanceOptions(selected) {
+      const options = [
+        ['light', '🌱 가볍게'],
+        ['normal', '☕ 보통'],
+        ['important', '🔥 중요'],
+        ['must', '🚨 오늘 꼭']
+      ];
+      return options.map(function(option) {
+        return '<option value="' + option[0] + '"' + (option[0] === selected ? ' selected' : '') + '>' + option[1] + '</option>';
+      }).join('');
+    }
+
+    function getDifficultyOptions(selected) {
+      const value = String(Number(selected || 0));
+      const labels = ['잘 모르겠음', '⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'];
+      return labels.map(function(label, index) {
+        return '<option value="' + index + '"' + (String(index) === value ? ' selected' : '') + '>' + label + '</option>';
+      }).join('');
+    }
+
+    function getEstimatedTimeOptions(selected) {
+      const options = ['5분', '15분', '30분', '1시간', '2시간', '3시간', '반나절', '잘 모르겠음'];
+      return options.map(function(value) {
+        return '<option' + (value === selected ? ' selected' : '') + '>' + escapeHtml(value) + '</option>';
       }).join('');
     }
 
@@ -2843,6 +2989,7 @@
 
       saveProjects();
       resetProjectForm();
+      closeProjectForm();
       renderProjectPage();
     }
 
@@ -2859,10 +3006,28 @@
       setText('projectSaveBtn', '프로젝트 저장');
     }
 
+    function toggleProjectForm(forceOpen) {
+      isProjectFormOpen = typeof forceOpen === 'boolean' ? forceOpen : !isProjectFormOpen;
+      const card = document.getElementById('projectFormCard');
+      const button = document.getElementById('projectFormToggleBtn');
+      if (card) card.classList.toggle('open', isProjectFormOpen);
+      if (button) button.textContent = isProjectFormOpen ? '프로젝트 등록 접기' : '+ 프로젝트 등록';
+      if (isProjectFormOpen) {
+        const nameInput = document.getElementById('projectNameInput');
+        if (nameInput) nameInput.focus();
+      }
+    }
+
+    function closeProjectForm() {
+      isProjectFormOpen = false;
+      toggleProjectForm(false);
+    }
+
     function editProject(id) {
       const project = projects.find(function(item) { return item.id === id; });
       if (!project) return;
       editingProjectId = id;
+      toggleProjectForm(true);
       setValue('projectNameInput', project.name || '');
       setValue('projectTermInput', project.term || '단기');
       setValue('projectAreaInput', project.area || '기타');
@@ -2897,6 +3062,7 @@
       renderProjectSummary();
       renderProjectOptions();
       renderProjectList();
+      toggleProjectForm(isProjectFormOpen);
     }
 
     function renderProjectSummary() {
