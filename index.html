@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>화의 흔적 수집함</title>
+  <title>화화보드</title>
 
   <!-- PWA 설정 -->
   <meta name="theme-color" content="#4f8ef7">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="화의앱">
-  <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;화의 흔적 수집함&quot;,&quot;short_name&quot;:&quot;화의앱&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23ffffff&quot;,&quot;theme_color&quot;:&quot;%234f8ef7&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📋%3C/text%3E%3C/svg%3E&quot;,&quot;sizes&quot;:&quot;any&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]}">
+  <meta name="apple-mobile-web-app-title" content="화화보드">
+  <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;화화보드&quot;,&quot;short_name&quot;:&quot;화화보드&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23ffffff&quot;,&quot;theme_color&quot;:&quot;%234f8ef7&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📋%3C/text%3E%3C/svg%3E&quot;,&quot;sizes&quot;:&quot;any&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]}">
 
   <!-- 폰트 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -405,6 +405,90 @@
     }
 
     .task-input-row .input-field { flex: 1; }
+
+
+    .task-options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .task-calendar-card { margin-bottom: 16px; }
+
+    .task-selected-note {
+      color: var(--text-secondary);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .task-count-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      padding: 0 5px;
+      position: absolute;
+      right: 6px;
+      bottom: 6px;
+    }
+
+    .task-day-done-mark {
+      position: absolute;
+      left: 6px;
+      bottom: 6px;
+      font-size: 11px;
+      color: var(--primary);
+      background: var(--primary-light);
+      border-radius: 999px;
+      padding: 1px 6px;
+    }
+
+    .task-info-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .task-review {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--bg-main);
+      color: var(--text-secondary);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .task-review strong { color: var(--text-primary); }
+
+    .task-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .task-form-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      align-items: center;
+    }
+
+    .task-review-textarea {
+      min-height: 90px;
+      resize: vertical;
+      margin-top: 8px;
+    }
 
     .task-filter-row {
       display: flex;
@@ -1083,7 +1167,7 @@
   <!-- 모바일 상단 바 -->
   <div class="mobile-top-bar" id="mobileTopBar">
     <button class="mobile-hamburger" onclick="toggleSidebar()">☰</button>
-    <div class="mobile-title" id="mobilePageTitle">화의 흔적 수집함</div>
+    <div class="mobile-title" id="mobilePageTitle">화화보드</div>
   </div>
 
   <!-- 앱 전체 레이아웃 -->
@@ -1094,7 +1178,7 @@
 
       <!-- 로고 + 프로필 -->
       <div class="sidebar-header">
-        <div class="sidebar-logo">🐾 화의 흔적 수집함</div>
+        <div class="sidebar-logo">🧭 화화보드</div>
         <div class="profile-area">
           <div class="profile-photo" id="profilePhoto" onclick="showPage('settingsPage', null, '⚙️ 설정')">
             👤
@@ -1109,7 +1193,7 @@
       <!-- 네비게이션 -->
       <nav class="sidebar-nav">
         <button class="nav-item active" onclick="showPage('homePage', this, '🏠 홈')">🏠 홈</button>
-        <button class="nav-item" onclick="showPage('taskPage', this, '📝 할일 목록')">📝 할일 목록</button>
+        <button class="nav-item" onclick="showPage('taskPage', this, '📝 오늘 뭐하지')">📝 오늘 뭐하지</button>
         <button class="nav-item" onclick="showPage('archivePage', this, '🗂️ 생각 아카이브')">🗂️ 생각 아카이브</button>
         <button class="nav-item" onclick="showPage('devStudyPage', this, '📓 개발괴발 공부하기'); loadDevStudyPage();">📓 개발괴발 공부하기</button>
         <button class="nav-item" onclick="showPage('settingsPage', this, '⚙️ 설정')">⚙️ 설정</button>
@@ -1171,28 +1255,106 @@
       <!-- 할일 목록 페이지 -->
       <div id="taskPage" class="page">
         <div class="page-header">
-          <h2>📝 흔적 목록</h2>
-          <p>오늘 할 일을 적고, 해낸 일은 당당하게 생색내요</p>
+          <h2>📝 오늘 뭐하지</h2>
+          <p>오늘의 할 일을 고르고, 해낸 일은 작게 기록해두는 곳</p>
         </div>
 
-        <div class="card">
-          <h3>✍️ 오늘 할 일 추가</h3>
-          <div class="task-input-row">
-            <input class="input-field" id="taskInput" type="text" placeholder="예: 책자 2쪽 수정하기, 방 정리 20분, 메일 답장하기" onkeydown="handleTaskInputKey(event)">
-            <button class="btn-primary" onclick="addTask()">흔적 후보 추가</button>
+        <div class="card task-calendar-card">
+          <div class="archive-calendar-header">
+            <div>
+              <h3>📅 할일 달력</h3>
+              <p class="small-help">날짜를 누르면 그날의 할 일만 보여.</p>
+            </div>
+            <div class="archive-calendar-nav">
+              <button class="btn-secondary" onclick="moveTaskCalendar(-1)">이전 달</button>
+              <span class="archive-calendar-title" id="taskCalendarTitle">0000년 00월</span>
+              <button class="btn-secondary" onclick="moveTaskCalendar(1)">다음 달</button>
+              <button class="btn-secondary" onclick="selectTodayTaskDate()">오늘</button>
+              <button class="btn-secondary" onclick="clearTaskSelectedDate()">전체 보기</button>
+            </div>
           </div>
-          <p class="small-help">작게 적어도 좋아요. ‘대청소’보다 ‘책상 위 컵 치우기’가 앱도 사람도 덜 놀람.</p>
+          <div class="archive-calendar-grid" id="taskCalendarGrid"></div>
+          <p class="task-selected-note" id="taskSelectedDateText">오늘 할 일을 보여주는 중.</p>
         </div>
 
         <div class="card">
-          <h3>🐾 오늘의 흔적들</h3>
+          <h3>✍️ 할 일 추가</h3>
+          <div class="form-row">
+            <label class="form-label">할 일</label>
+            <div class="task-input-row">
+              <input class="input-field" id="taskInput" type="text" placeholder="예: 책자 2쪽 수정하기, 명상하기, 포트폴리오 문장 다듬기" onkeydown="handleTaskInputKey(event)">
+              <button class="btn-primary" onclick="addTask()">할 일 추가</button>
+            </div>
+          </div>
+          <div class="task-options-grid">
+            <div class="form-row">
+              <label class="form-label">날짜</label>
+              <input class="input-field" id="taskDateInput" type="date">
+            </div>
+            <div class="form-row">
+              <label class="form-label">항목 구분</label>
+              <select class="input-field" id="taskCategoryInput">
+                <option>사무</option>
+                <option>디자인</option>
+                <option>학업</option>
+                <option>커리어</option>
+                <option>루틴</option>
+                <option>생활</option>
+                <option>마음</option>
+                <option>운동</option>
+                <option>기타</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">중요도</label>
+              <select class="input-field" id="taskImportanceInput">
+                <option value="light">🌱 가볍게</option>
+                <option value="normal" selected>☕ 보통</option>
+                <option value="important">🔥 중요</option>
+                <option value="must">🚨 오늘 꼭</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">예상 난이도</label>
+              <select class="input-field" id="taskExpectedDifficultyInput">
+                <option value="0">잘 모르겠음</option>
+                <option value="1">⭐</option>
+                <option value="2">⭐⭐</option>
+                <option value="3" selected>⭐⭐⭐</option>
+                <option value="4">⭐⭐⭐⭐</option>
+                <option value="5">⭐⭐⭐⭐⭐</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">예상 소요 시간</label>
+              <select class="input-field" id="taskEstimatedTimeInput">
+                <option>5분</option>
+                <option>15분</option>
+                <option selected>30분</option>
+                <option>1시간</option>
+                <option>2시간</option>
+                <option>3시간</option>
+                <option>반나절</option>
+                <option>잘 모르겠음</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">연결 프로젝트 <span style="color:var(--text-tertiary);font-weight:400;">선택</span></label>
+              <input class="input-field" id="taskProjectInput" type="text" placeholder="예: 취업 포트폴리오, 웹앱 만들기">
+            </div>
+          </div>
+          <p class="small-help">제목만 적어도 저장됨. 나머지는 쓸 힘 있을 때만 적자. 앱이 숙제 내면 안 됨.</p>
+        </div>
+
+        <div class="card">
+          <h3>📌 선택한 날의 할 일</h3>
           <div class="task-filter-row">
             <button class="filter-btn active" id="filterAll" onclick="setTaskFilter('all', this)">전체</button>
             <button class="filter-btn" id="filterActive" onclick="setTaskFilter('active', this)">아직 기다리는 일</button>
             <button class="filter-btn" id="filterDone" onclick="setTaskFilter('done', this)">해낸 일</button>
           </div>
           <div id="taskList" class="task-list">
-            <p class="empty-state">아직 적힌 일이 없어요. 일단 하나만 적어보자. 못생긴 시작 환영.</p>
+            <p class="empty-state">아직 적힌 일이 없어. 일단 하나만 적어보자. 못생긴 시작 환영.</p>
           </div>
         </div>
       </div>
@@ -1507,6 +1669,33 @@
     </div>
   </div>
 
+  <!-- 할 일 완료 기록 모달 -->
+  <div class="modal-overlay" id="taskReviewModal">
+    <div class="modal-box">
+      <h3>해냈다! 어땠어?</h3>
+      <p id="taskReviewTitle" style="color: var(--text-secondary); margin-bottom: 12px;"></p>
+      <div class="form-row">
+        <label class="form-label">실행 후 난이도</label>
+        <select class="input-field" id="taskActualDifficultyInput">
+          <option value="0">안 남길래</option>
+          <option value="1">⭐ 생각보다 쉬웠음</option>
+          <option value="2">⭐⭐ 할만했음</option>
+          <option value="3">⭐⭐⭐ 보통</option>
+          <option value="4">⭐⭐⭐⭐ 빡셌음</option>
+          <option value="5">⭐⭐⭐⭐⭐ 이건 산이었다</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">짧은 코멘트</label>
+        <textarea class="input-field task-review-textarea" id="taskCompletionCommentInput" placeholder="예: 생각보다 빨리 끝남 / 하기 전엔 싫었는데 하고 나니 개운함"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeTaskReviewModal()">그냥 완료</button>
+        <button class="btn-primary" onclick="saveTaskCompletionReview()">완료 기록 저장</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 토스트 -->
   <div id="toast"></div>
 
@@ -1528,7 +1717,7 @@
       document.getElementById(pageId).classList.add('active');
       if (navBtn) navBtn.classList.add('active');
       document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('mobilePageTitle').textContent = title || '화의 흔적 수집함';
+      document.getElementById('mobilePageTitle').textContent = title || '화화보드';
     }
 
     function toggleSidebar() {
@@ -1797,7 +1986,8 @@
       applyProfile();
       applyDesign();
       loadTasks();
-      renderTaskList();
+      initTaskFormDefaults();
+      renderTaskPage();
       renderHomeSummary();
       loadArchiveEntries();
       renderArchivePage();
@@ -1824,6 +2014,9 @@
 
     var tasks = [];
     var currentTaskFilter = 'all';
+    var taskSelectedDate = getDateKey(new Date());
+    var taskCalendarDate = new Date();
+    var taskReviewTargetId = null;
 
     // 한국어 입력기(IME) 조합 상태를 기억하는 변수들.
     // 예: '명상하기'를 입력하고 Enter를 누를 때 마지막 글자 '기'가 따로 추가되는 문제를 막기 위해 사용해.
@@ -1834,7 +2027,7 @@
 
     var celebrationMessages = [
       '🎉 해냈다! 이건 생색내도 됨',
-      '👏 오늘의 흔적 하나 추가',
+      '👏 오늘의 할 일 하나 정리',
       '🌿 작지만 분명히 했다',
       '✨ 증거 확보. 아무것도 안 한 날 아님',
       '🔥 오늘의 나, 일했다',
@@ -1842,41 +2035,71 @@
       '💪 나 제법인데? 생색권 획득'
     ];
 
+    var taskImportanceLabels = {
+      light: '🌱 가볍게',
+      normal: '☕ 보통',
+      important: '🔥 중요',
+      must: '🚨 오늘 꼭'
+    };
+
+    function initTaskFormDefaults() {
+      const dateInput = document.getElementById('taskDateInput');
+      if (dateInput && !dateInput.value) dateInput.value = taskSelectedDate || getDateKey(new Date());
+    }
+
     function addTask() {
       const input = document.getElementById('taskInput');
       const text = input.value.trim();
       const now = Date.now();
 
       if (!text) {
-        showToast('✍️ 할 일을 먼저 적어줘요');
+        showToast('✍️ 할 일을 먼저 적어줘');
         input.focus();
         return;
       }
 
       // 아주 짧은 시간 안에 같은 내용이 두 번 들어오는 것을 막는 안전장치.
-      // 버튼 더블클릭이나 엔터 중복 입력에도 같은 할 일이 두 번 생기지 않게 해.
       if (text === lastTaskAddText && now - lastTaskAddTime < 700) {
         input.value = '';
         input.focus();
         return;
       }
 
+      const dateInput = document.getElementById('taskDateInput');
+      const categoryInput = document.getElementById('taskCategoryInput');
+      const importanceInput = document.getElementById('taskImportanceInput');
+      const expectedDifficultyInput = document.getElementById('taskExpectedDifficultyInput');
+      const estimatedTimeInput = document.getElementById('taskEstimatedTimeInput');
+      const projectInput = document.getElementById('taskProjectInput');
+
+      const taskDate = dateInput && dateInput.value ? dateInput.value : getDateKey(new Date());
+
       const newTask = {
         id: now,
         text: text,
         done: false,
         createdAt: new Date().toISOString(),
-        doneAt: ''
+        date: taskDate,
+        doneAt: '',
+        category: categoryInput ? categoryInput.value : '기타',
+        importance: importanceInput ? importanceInput.value : 'normal',
+        expectedDifficulty: expectedDifficultyInput ? Number(expectedDifficultyInput.value || 0) : 0,
+        estimatedTime: estimatedTimeInput ? estimatedTimeInput.value : '잘 모르겠음',
+        project: projectInput ? projectInput.value.trim() : '',
+        actualDifficulty: 0,
+        completionComment: ''
       };
 
       tasks.unshift(newTask);
+      taskSelectedDate = taskDate;
+      taskCalendarDate = new Date(taskDate + 'T00:00:00');
       lastTaskAddText = text;
       lastTaskAddTime = now;
       input.value = '';
       saveTasks();
-      renderTaskList();
+      renderTaskPage();
       renderHomeSummary();
-      showToast('🐾 흔적 후보가 추가됐어요');
+      showToast('📝 오늘 뭐하지에 추가했어');
       input.focus();
 
       // 일부 한글 입력기에서 Enter 직후 마지막 조합 글자가 input에 다시 남는 경우가 있어서 한 번 더 비워줘.
@@ -1891,8 +2114,6 @@
       if (event.key !== 'Enter') return;
       event.preventDefault();
 
-      // 한글 입력 중에는 Enter가 '글자 확정' 역할을 먼저 할 수 있어.
-      // 이때 바로 addTask()를 실행하면 마지막 글자만 한 번 더 추가되는 버그가 생길 수 있음.
       if (taskInputIsComposing || event.isComposing || event.keyCode === 229) {
         taskEnterPendingAfterComposition = true;
         return;
@@ -1925,35 +2146,78 @@
       const task = tasks.find(t => t.id === id);
       if (!task) return;
 
-      task.done = !task.done;
-      task.doneAt = task.done ? new Date().toISOString() : '';
+      const willComplete = !task.done;
+      task.done = willComplete;
+      task.doneAt = willComplete ? new Date().toISOString() : '';
 
       saveTasks();
-      renderTaskList();
+      renderTaskPage();
       renderHomeSummary();
 
-      if (task.done) {
+      if (willComplete) {
         showToast(getRandomCelebration());
+        setTimeout(function() { openTaskReviewModal(id); }, 180);
       } else {
-        showToast('↩️ 다시 할 일로 돌려놨어요');
+        showToast('↩️ 다시 할 일로 돌려놨어');
       }
+    }
+
+    function openTaskReviewModal(id) {
+      const task = tasks.find(t => t.id === id);
+      if (!task || !task.done) return;
+      taskReviewTargetId = id;
+      setText('taskReviewTitle', '“' + getTaskTitle(task) + '”');
+      const difficulty = document.getElementById('taskActualDifficultyInput');
+      const comment = document.getElementById('taskCompletionCommentInput');
+      if (difficulty) difficulty.value = String(task.actualDifficulty || 0);
+      if (comment) comment.value = task.completionComment || '';
+      const modal = document.getElementById('taskReviewModal');
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeTaskReviewModal() {
+      const modal = document.getElementById('taskReviewModal');
+      if (modal) modal.classList.remove('open');
+      taskReviewTargetId = null;
+    }
+
+    function saveTaskCompletionReview() {
+      const task = tasks.find(t => t.id === taskReviewTargetId);
+      if (!task) {
+        closeTaskReviewModal();
+        return;
+      }
+      const difficulty = document.getElementById('taskActualDifficultyInput');
+      const comment = document.getElementById('taskCompletionCommentInput');
+      task.actualDifficulty = difficulty ? Number(difficulty.value || 0) : 0;
+      task.completionComment = comment ? comment.value.trim() : '';
+      saveTasks();
+      renderTaskPage();
+      renderHomeSummary();
+      closeTaskReviewModal();
+      showToast('📌 완료 기록까지 저장했어');
     }
 
     function deleteTask(id) {
       const task = tasks.find(t => t.id === id);
-      const taskName = task ? task.text : '이 할 일';
+      const taskName = task ? getTaskTitle(task) : '이 할 일';
 
       openModal(
-        '없던 일로 할까요?',
-        '“' + taskName + '” 항목을 삭제할까요?',
+        '없던 일로 할까?',
+        '“' + taskName + '” 항목을 삭제할까?',
         function() {
           tasks = tasks.filter(t => t.id !== id);
           saveTasks();
-          renderTaskList();
+          renderTaskPage();
           renderHomeSummary();
-          showToast('🧹 없던 일로 정리했어요');
+          showToast('🧹 없던 일로 정리했어');
         }
       );
+    }
+
+    function renderTaskPage() {
+      renderTaskCalendar();
+      renderTaskList();
     }
 
     function renderTaskList() {
@@ -1961,41 +2225,80 @@
       if (!listEl) return;
 
       const filteredTasks = tasks.filter(task => {
+        if (taskSelectedDate && getTaskDateKey(task) !== taskSelectedDate) return false;
         if (currentTaskFilter === 'active') return !task.done;
         if (currentTaskFilter === 'done') return task.done;
         return true;
       });
 
+      updateTaskSelectedDateText(filteredTasks.length);
+
       if (filteredTasks.length === 0) {
         const message = currentTaskFilter === 'done'
-          ? '아직 해낸 일이 없어요. 하나만 해도 생색 리스트에 올라감.'
+          ? '이 날짜엔 아직 해낸 일이 없어. 하나만 해도 여기 뜸.'
           : currentTaskFilter === 'active'
-            ? '기다리는 일이 없어요. 오? 지금 꽤 평화로운데?'
-            : '아직 적힌 일이 없어요. 일단 하나만 적어보자. 못생긴 시작 환영.';
+            ? '이 날짜엔 기다리는 일이 없어. 오? 꽤 평화로운데?'
+            : '이 날짜엔 아직 적힌 일이 없어. 하나만 적어보자.';
         listEl.innerHTML = '<p class="empty-state">' + message + '</p>';
         return;
       }
 
       listEl.innerHTML = filteredTasks.map(task => {
-        const safeText = escapeHtml(task.text);
+        const safeText = escapeHtml(getTaskTitle(task));
         const doneClass = task.done ? ' done' : '';
         const statusBadge = task.done
-          ? '<span class="task-badge done-badge">🏆 생색권 획득</span>'
-          : '<span class="task-badge">⏳ 아직 기다리는 중</span>';
+          ? '<span class="task-badge done-badge">🏆 해낸 일</span>'
+          : '<span class="task-badge">⏳ 기다리는 일</span>';
         const actionBtn = task.done
           ? '<button class="task-action-btn task-undo-btn" onclick="toggleTask(' + task.id + ')">다시 할래</button>'
           : '<button class="task-action-btn task-done-btn" onclick="toggleTask(' + task.id + ')">해냈다!</button>';
+        const infoBadges = getTaskInfoBadges(task);
+        const review = getTaskReviewHtml(task);
+        const reviewButton = task.done
+          ? '<button class="task-action-btn task-undo-btn" onclick="openTaskReviewModal(' + task.id + ')">완료 기록</button>'
+          : '';
 
         return '' +
           '<div class="task-item' + doneClass + '">' +
             '<div class="task-main">' +
               '<div class="task-title">' + safeText + '</div>' +
               '<div class="task-meta">' + statusBadge + '</div>' +
+              '<div class="task-info-row">' + infoBadges + '</div>' +
+              review +
             '</div>' +
-            actionBtn +
-            '<button class="task-action-btn task-delete-btn" onclick="deleteTask(' + task.id + ')">없던 일로</button>' +
+            '<div class="task-actions">' + actionBtn + reviewButton +
+              '<button class="task-action-btn task-delete-btn" onclick="deleteTask(' + task.id + ')">삭제</button>' +
+            '</div>' +
           '</div>';
       }).join('');
+    }
+
+    function getTaskInfoBadges(task) {
+      const badges = [];
+      if (task.category) badges.push('📂 ' + task.category);
+      badges.push(taskImportanceLabels[task.importance || 'normal'] || '☕ 보통');
+      if (Number(task.expectedDifficulty || 0) > 0) badges.push('예상 ' + makeStars(task.expectedDifficulty));
+      else badges.push('예상 난이도 ?');
+      if (task.estimatedTime) badges.push('⏱ ' + task.estimatedTime);
+      if (task.project) badges.push('🧩 ' + task.project);
+      return badges.map(function(label) {
+        return '<span class="task-badge">' + escapeHtml(label) + '</span>';
+      }).join('');
+    }
+
+    function getTaskReviewHtml(task) {
+      if (!task.done) return '';
+      const parts = [];
+      if (Number(task.actualDifficulty || 0) > 0) parts.push('<strong>실행 후 난이도</strong> ' + makeStars(task.actualDifficulty));
+      if (task.completionComment) parts.push('<strong>코멘트</strong> ' + escapeHtml(task.completionComment));
+      if (parts.length === 0) return '';
+      return '<div class="task-review">' + parts.join('<br>') + '</div>';
+    }
+
+    function makeStars(value) {
+      const n = Math.max(0, Math.min(5, Number(value || 0)));
+      if (!n) return '?';
+      return '⭐'.repeat(n);
     }
 
     function saveTasks() {
@@ -2010,11 +2313,31 @@
       }
 
       try {
-        tasks = JSON.parse(saved) || [];
+        const parsed = JSON.parse(saved) || [];
+        tasks = parsed.map(normalizeTask);
       } catch (error) {
         tasks = [];
-        showToast('⚠️ 저장된 할 일을 불러오지 못했어요');
+        showToast('⚠️ 저장된 할 일을 불러오지 못했어');
       }
+    }
+
+    function normalizeTask(task) {
+      const createdAt = task.createdAt || new Date().toISOString();
+      return Object.assign({}, task, {
+        id: task.id || Date.now() + Math.floor(Math.random() * 1000),
+        text: task.text || task.title || '',
+        done: !!task.done,
+        createdAt: createdAt,
+        date: task.date || getDateKey(createdAt),
+        doneAt: task.doneAt || '',
+        category: task.category || '기타',
+        importance: task.importance || 'normal',
+        expectedDifficulty: Number(task.expectedDifficulty || 0),
+        estimatedTime: task.estimatedTime || '잘 모르겠음',
+        project: task.project || '',
+        actualDifficulty: Number(task.actualDifficulty || 0),
+        completionComment: task.completionComment || ''
+      });
     }
 
     function setTaskFilter(filter, btn) {
@@ -2024,16 +2347,100 @@
       renderTaskList();
     }
 
+    function renderTaskCalendar() {
+      const grid = document.getElementById('taskCalendarGrid');
+      const title = document.getElementById('taskCalendarTitle');
+      if (!grid) return;
+
+      const y = taskCalendarDate.getFullYear();
+      const m = taskCalendarDate.getMonth();
+      if (title) title.textContent = y + '년 ' + String(m + 1).padStart(2, '0') + '월';
+
+      const counts = {};
+      const doneCounts = {};
+      tasks.forEach(function(task) {
+        const key = getTaskDateKey(task);
+        if (!key) return;
+        counts[key] = (counts[key] || 0) + 1;
+        if (task.done) doneCounts[key] = (doneCounts[key] || 0) + 1;
+      });
+
+      const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+      let html = weekdays.map(function(day) { return '<div class="archive-weekday">' + day + '</div>'; }).join('');
+
+      const firstDay = new Date(y, m, 1).getDay();
+      const lastDate = new Date(y, m + 1, 0).getDate();
+      for (let i = 0; i < firstDay; i++) html += '<div class="archive-calendar-cell empty"></div>';
+
+      const todayKey = getDateKey(new Date());
+      for (let day = 1; day <= lastDate; day++) {
+        const date = new Date(y, m, day);
+        const key = getDateKey(date);
+        const count = counts[key] || 0;
+        const doneCount = doneCounts[key] || 0;
+        const classes = [
+          'archive-calendar-cell',
+          count ? 'has-entry' : '',
+          key === todayKey ? 'today' : '',
+          key === taskSelectedDate ? 'selected' : ''
+        ].filter(Boolean).join(' ');
+        html += '<button type="button" class="' + classes + '" onclick="selectTaskDate(\'' + key + '\')">' +
+          '<span class="archive-day-number">' + day + '</span>' +
+          (doneCount ? '<span class="task-day-done-mark">✓ ' + doneCount + '</span>' : '') +
+          (count ? '<span class="task-count-pill">' + count + '</span>' : '') +
+          '</button>';
+      }
+
+      grid.innerHTML = html;
+    }
+
+    function moveTaskCalendar(delta) {
+      taskCalendarDate = new Date(taskCalendarDate.getFullYear(), taskCalendarDate.getMonth() + delta, 1);
+      renderTaskCalendar();
+    }
+
+    function selectTaskDate(dateKey) {
+      taskSelectedDate = dateKey;
+      const d = new Date(dateKey + 'T00:00:00');
+      if (!isNaN(d.getTime())) taskCalendarDate = d;
+      const dateInput = document.getElementById('taskDateInput');
+      if (dateInput) dateInput.value = dateKey;
+      renderTaskPage();
+    }
+
+    function selectTodayTaskDate() {
+      selectTaskDate(getDateKey(new Date()));
+    }
+
+    function clearTaskSelectedDate() {
+      taskSelectedDate = null;
+      renderTaskPage();
+    }
+
+    function updateTaskSelectedDateText(count) {
+      const el = document.getElementById('taskSelectedDateText');
+      if (!el) return;
+      if (taskSelectedDate) {
+        const dayTasks = tasks.filter(function(task) { return getTaskDateKey(task) === taskSelectedDate; });
+        const done = dayTasks.filter(function(task) { return task.done; }).length;
+        el.textContent = formatTaskDate(taskSelectedDate) + ' · 할 일 ' + dayTasks.length + '개 / 해낸 일 ' + done + '개 · 현재 조건 ' + count + '개 표시 중.';
+      } else {
+        el.textContent = '전체 날짜의 할 일을 보여주는 중 · 현재 조건 ' + count + '개 표시 중.';
+      }
+    }
+
     function renderHomeSummary() {
-      const total = tasks.length;
-      const done = tasks.filter(t => t.done).length;
+      const todayKey = getDateKey(new Date());
+      const todayTasks = tasks.filter(function(task) { return getTaskDateKey(task) === todayKey; });
+      const total = todayTasks.length;
+      const done = todayTasks.filter(t => t.done).length;
       const active = total - done;
       const percent = total === 0 ? 0 : Math.round((done / total) * 100);
 
       setText('statTotal', total);
       setText('statDone', done);
       setText('statActive', active);
-      setText('progressText', total === 0 ? '아직 적힌 할 일이 없어. 하나만 적어도 시작.' : '진행률 ' + percent + '% · ' + done + '개 끝냄 · ' + active + '개 기다리는 중');
+      setText('progressText', total === 0 ? '오늘 적힌 할 일이 없어. 하나만 적어도 시작.' : '진행률 ' + percent + '% · ' + done + '개 끝냄 · ' + active + '개 기다리는 중');
       setText('homeEncouragement', getHomeEncouragement(done, total));
       setText('todayOneLiner', getTodayOneLiner());
 
@@ -2043,26 +2450,35 @@
       const todayText = document.getElementById('todayDateText');
       if (todayText) todayText.textContent = getTodayText();
 
-      renderDoneTasksHome();
+      renderDoneTasksHome(todayTasks);
     }
 
-    function renderDoneTasksHome() {
+    function renderDoneTasksHome(todayTasks) {
       const homeList = document.getElementById('doneTasksHome');
       if (!homeList) return;
 
-      const doneTasks = tasks.filter(t => t.done);
+      const doneTasks = (todayTasks || tasks).filter(t => t.done);
       if (doneTasks.length === 0) {
         homeList.innerHTML = '<p class="empty-state">아직 해낸 일이 없어. 하나만 끝내도 여기에 뜸.</p>';
         return;
       }
 
       homeList.innerHTML = doneTasks.slice(0, 6).map(task => {
-        return '<div class="done-home-item">✅ <strong>' + escapeHtml(task.text) + '</strong></div>';
+        return '<div class="done-home-item">✅ <strong>' + escapeHtml(getTaskTitle(task)) + '</strong></div>';
       }).join('');
 
       if (doneTasks.length > 6) {
         homeList.innerHTML += '<div class="done-home-item">✨ 외 ' + (doneTasks.length - 6) + '개 더 끝냄.</div>';
       }
+    }
+
+    function getTaskTitle(task) {
+      return task ? (task.text || task.title || '제목 없는 할 일') : '제목 없는 할 일';
+    }
+
+    function getTaskDateKey(task) {
+      if (!task) return '';
+      return task.date || getDateKey(task.createdAt || new Date());
     }
 
     function getRandomCelebration() {
@@ -2093,7 +2509,6 @@
         '🌞 오늘 하루는 내 거.'
       ];
 
-      // 날짜 기준으로 하나를 고르면 새로고침해도 같은 날에는 같은 문구가 보여.
       const today = new Date();
       const dateKey = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
       return messages[dateKey % messages.length];
@@ -2104,6 +2519,18 @@
       return today.toLocaleDateString('ko-KR', {
         year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
       });
+    }
+
+    function getDateKey(value) {
+      const d = value instanceof Date ? value : new Date(value);
+      if (isNaN(d.getTime())) return '';
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    function formatTaskDate(isoOrKey) {
+      const d = isoOrKey ? new Date(String(isoOrKey).length === 10 ? isoOrKey + 'T00:00:00' : isoOrKey) : new Date();
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
     }
 
     function setText(id, value) {
@@ -2752,7 +3179,8 @@
       applyDesign();
       setupTaskInputCompositionGuard();
       loadTasks();
-      renderTaskList();
+      initTaskFormDefaults();
+      renderTaskPage();
       renderHomeSummary();
       loadArchiveEntries();
       renderArchivePage();
