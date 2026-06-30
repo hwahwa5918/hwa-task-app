@@ -752,6 +752,111 @@
 
     .project-linked-list.open { display: block; }
 
+    .project-flow-panel {
+      display: none;
+      border-top: 1px solid var(--border-color);
+      padding-top: 12px;
+    }
+
+    .project-flow-panel.open { display: block; }
+
+    .project-flow-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .project-flow-table {
+      width: 100%;
+      min-width: 680px;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .project-flow-table th,
+    .project-flow-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: top;
+      line-height: 1.55;
+    }
+
+    .project-flow-table th {
+      background: #f6f7fb;
+      color: var(--text-primary);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .project-flow-table tbody tr:nth-child(even) {
+      background: #fbfcff;
+    }
+
+    .project-flow-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .project-flow-title {
+      color: var(--text-primary);
+      font-weight: 700;
+      word-break: break-word;
+      min-width: 180px;
+    }
+
+    .project-flow-date {
+      color: var(--text-primary);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .project-flow-row.done {
+      color: #8a8f98;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(31, 142, 94, 0.05) 0,
+        rgba(31, 142, 94, 0.05) 6px,
+        transparent 6px,
+        transparent 12px
+      );
+    }
+
+    .project-flow-row.done .project-flow-title,
+    .project-flow-row.done .project-flow-date {
+      color: #7a818c;
+      text-decoration: line-through;
+      text-decoration-thickness: 1px;
+    }
+
+    .project-flow-row.overdue {
+      background: #fff2f2;
+      box-shadow: inset 3px 0 0 #e53e3e;
+    }
+
+    .project-flow-row.today {
+      background: #fff8d9;
+      box-shadow: inset 3px 0 0 var(--primary);
+    }
+
+    .project-flow-status {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #edf2f7;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .project-flow-status.done { background: #e6f4ea; color: #1f7a4d; }
+    .project-flow-status.today { background: #fff0bd; color: #8a5b00; }
+    .project-flow-status.overdue { background: #ffe1e1; color: #c53030; }
+    .project-flow-status.upcoming { background: #e8f1ff; color: #2b5fb8; }
+    .project-flow-status.no-date { background: #f1f1f1; color: #666; }
+
     .project-task-row {
       background: var(--bg-main);
       border-radius: 10px;
@@ -3253,6 +3358,7 @@
       list.innerHTML = filtered.map(function(project) {
         const stats = getProjectTaskStats(project.name);
         const linkedId = 'projectLinked' + project.id;
+        const flowId = 'projectFlow' + project.id;
         const desc = project.description ? truncateText(project.description, 120) : '설명이 아직 없어.';
         return '' +
           '<div class="project-card">' +
@@ -3279,11 +3385,13 @@
               '<span class="task-badge">남은 ' + stats.left + '개</span>' +
             '</div>' +
             '<div class="project-actions">' +
-              '<button class="archive-mini-btn" onclick="toggleProjectTasks(&quot;' + linkedId + '&quot;, this)">연결된 할 일 보기</button>' +
+              '<button class="archive-mini-btn" onclick="toggleProjectTasks(&quot;' + linkedId + '&quot;, this)">연결된 할 일</button>' +
+              '<button class="archive-mini-btn" onclick="toggleProjectFlow(&quot;' + flowId + '&quot;, this)">진행 흐름</button>' +
               '<button class="archive-mini-btn" onclick="editProject(' + project.id + ')">수정</button>' +
               '<button class="archive-mini-btn danger" onclick="deleteProject(' + project.id + ')">삭제</button>' +
             '</div>' +
             '<div class="project-linked-list" id="' + linkedId + '">' + getLinkedProjectTasksHtml(stats.tasks) + '</div>' +
+            '<div class="project-flow-panel" id="' + flowId + '">' + getProjectFlowHtml(stats.tasks) + '</div>' +
           '</div>';
       }).join('');
     }
@@ -3301,7 +3409,15 @@
       if (!panel) return;
       const next = !panel.classList.contains('open');
       panel.classList.toggle('open', next);
-      if (btn) btn.textContent = next ? '연결된 할 일 접기' : '연결된 할 일 보기';
+      if (btn) btn.textContent = next ? '연결된 할 일 접기' : '연결된 할 일';
+    }
+
+    function toggleProjectFlow(id, btn) {
+      const panel = document.getElementById(id);
+      if (!panel) return;
+      const next = !panel.classList.contains('open');
+      panel.classList.toggle('open', next);
+      if (btn) btn.textContent = next ? '진행 흐름 접기' : '진행 흐름';
     }
 
     function getProjectTaskStats(projectName) {
@@ -3346,6 +3462,63 @@
           (overdue ? '<div class="project-overdue-label">지난 날짜의 미완료 할 일이야</div>' : '') +
         '</div>';
       }).join('') + '</div>';
+    }
+
+    function getProjectFlowHtml(linkedTasks) {
+      if (!linkedTasks || linkedTasks.length === 0) {
+        return '<p class="empty-state" style="padding: 18px 0;">아직 연결된 할 일이 없어요. 오늘 뭐하지에서 이 프로젝트를 연결해보세요.</p>';
+      }
+
+      const sortedTasks = linkedTasks.slice().sort(function(a, b) {
+        const aDate = getTaskDeadlineKey(a);
+        const bDate = getTaskDeadlineKey(b);
+        if (!aDate && !bDate) return String(getTaskTitle(a)).localeCompare(String(getTaskTitle(b)), 'ko');
+        if (!aDate) return 1;
+        if (!bDate) return -1;
+        if (aDate === bDate) return String(getTaskTitle(a)).localeCompare(String(getTaskTitle(b)), 'ko');
+        return aDate.localeCompare(bDate);
+      });
+
+      return '<div class="project-flow-scroll">' +
+        '<table class="project-flow-table">' +
+          '<thead><tr>' +
+            '<th>마감일</th>' +
+            '<th>상태</th>' +
+            '<th>할 일 내용</th>' +
+            '<th>항목 구분</th>' +
+            '<th>중요도</th>' +
+            '<th>예상 소요 시간</th>' +
+          '</tr></thead>' +
+          '<tbody>' + sortedTasks.map(renderProjectFlowRow).join('') + '</tbody>' +
+        '</table>' +
+      '</div>';
+    }
+
+    function renderProjectFlowRow(task) {
+      const status = getProjectFlowTaskStatus(task);
+      const rowClasses = ['project-flow-row', status.className].filter(Boolean).join(' ');
+      return '<tr class="' + rowClasses + '">' +
+        '<td class="project-flow-date">' + escapeHtml(getTaskDeadlineKey(task) || '마감일 없음') + '</td>' +
+        '<td><span class="project-flow-status ' + status.className + '">' + escapeHtml(status.label) + '</span></td>' +
+        '<td class="project-flow-title">' + escapeHtml(getTaskTitle(task)) + '</td>' +
+        '<td>' + escapeHtml(task.category || '기타') + '</td>' +
+        '<td>' + escapeHtml(taskImportanceLabels[task.importance || 'normal'] || '☕ 보통') + '</td>' +
+        '<td>' + escapeHtml(task.estimatedTime || '잘 모르겠음') + '</td>' +
+      '</tr>';
+    }
+
+    function getProjectFlowTaskStatus(task) {
+      const dateKey = getTaskDeadlineKey(task);
+      const todayKey = getDateKey(new Date());
+      if (task && task.done) return { label: '완료', className: 'done' };
+      if (!dateKey) return { label: '날짜 없음', className: 'no-date' };
+      if (dateKey < todayKey) return { label: '지남', className: 'overdue' };
+      if (dateKey === todayKey) return { label: '오늘', className: 'today' };
+      return { label: '예정', className: 'upcoming' };
+    }
+
+    function getTaskDeadlineKey(task) {
+      return task && task.date ? task.date : '';
     }
 
     function isTaskOverdue(task) {
