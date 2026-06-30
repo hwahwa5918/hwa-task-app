@@ -1489,7 +1489,8 @@
               <label class="form-label">항목 구분</label>
               <select class="input-field" id="taskCategoryInput">
                 <option>사무</option>
-                <option>디자인</option>
+                <option>외주</option>
+                <option>화화작업실</option>
                 <option>학업</option>
                 <option>커리어</option>
                 <option>루틴</option>
@@ -2328,6 +2329,7 @@
     var currentProjectFilter = '전체';
     var isProjectFormOpen = false;
 
+    var taskCategoryOptions = ['사무', '외주', '화화작업실', '학업', '커리어', '루틴', '생활', '마음', '운동', '기타'];
     var projectAreaOptions = ['외주', '화화작업실', '커리어', '학업', '루틴', '마음', '명상', '기타'];
 
     // 한국어 입력기(IME) 조합 상태를 기억하는 변수들.
@@ -2393,7 +2395,7 @@
         createdAt: new Date().toISOString(),
         date: taskDate,
         doneAt: '',
-        category: categoryInput ? categoryInput.value : '기타',
+        category: normalizeTaskCategory(categoryInput ? categoryInput.value : '기타'),
         importance: importanceInput ? importanceInput.value : 'normal',
         expectedDifficulty: expectedDifficultyInput ? Number(expectedDifficultyInput.value || 0) : 0,
         estimatedTime: estimatedTimeInput ? estimatedTimeInput.value : '잘 모르겠음',
@@ -2556,7 +2558,7 @@
       }
 
       task.text = text;
-      task.category = getInputValue('taskEditCategory' + id, task.category || '기타');
+      task.category = normalizeTaskCategory(getInputValue('taskEditCategory' + id, task.category || '기타'));
       task.importance = getInputValue('taskEditImportance' + id, task.importance || 'normal');
       task.expectedDifficulty = Number(getInputValue('taskEditExpectedDifficulty' + id, task.expectedDifficulty || 0));
       task.estimatedTime = getInputValue('taskEditEstimatedTime' + id, task.estimatedTime || '잘 모르겠음');
@@ -2659,7 +2661,7 @@
       const dayTasks = tasks.filter(function(task) {
         return !taskSelectedDate || getTaskDateKey(task) === taskSelectedDate;
       });
-      const categories = ['사무', '디자인', '학업', '커리어', '루틴', '생활', '마음', '운동', '기타'];
+      const categories = taskCategoryOptions;
       const projectNames = Array.from(new Set(dayTasks.map(function(task) {
         return String(task.project || '').trim();
       }).filter(Boolean))).sort(function(a, b) { return a.localeCompare(b, 'ko'); });
@@ -2734,8 +2736,9 @@
     }
 
     function getTaskCategoryOptions(selected) {
-      return ['사무', '디자인', '학업', '커리어', '루틴', '생활', '마음', '운동', '기타'].map(function(value) {
-        return '<option' + (value === selected ? ' selected' : '') + '>' + escapeHtml(value) + '</option>';
+      const normalizedSelected = normalizeTaskCategory(selected);
+      return taskCategoryOptions.map(function(value) {
+        return '<option' + (value === normalizedSelected ? ' selected' : '') + '>' + escapeHtml(value) + '</option>';
       }).join('');
     }
 
@@ -2807,7 +2810,9 @@
 
       try {
         const parsed = JSON.parse(saved) || [];
+        const needsMigration = parsed.some(function(task) { return task && task.category === '디자인'; });
         tasks = parsed.map(normalizeTask);
+        if (needsMigration) saveTasks();
       } catch (error) {
         tasks = [];
         showToast('⚠️ 저장된 할 일을 불러오지 못했어');
@@ -2823,7 +2828,7 @@
         createdAt: createdAt,
         date: task.date || getDateKey(createdAt),
         doneAt: task.doneAt || '',
-        category: task.category || '기타',
+        category: normalizeTaskCategory(task.category),
         importance: task.importance || 'normal',
         expectedDifficulty: Number(task.expectedDifficulty || 0),
         estimatedTime: task.estimatedTime || '잘 모르겠음',
@@ -2838,6 +2843,12 @@
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
       renderTaskList();
+    }
+
+    function normalizeTaskCategory(value) {
+      const category = String(value || '').trim();
+      if (category === '디자인') return '외주';
+      return taskCategoryOptions.indexOf(category) !== -1 ? category : '기타';
     }
 
     function setTaskDetailFilter(value) {
