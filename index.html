@@ -513,6 +513,11 @@
       margin-bottom: 14px;
     }
 
+    .task-index-filter {
+      max-width: 360px;
+      margin-bottom: 14px;
+    }
+
     .filter-btn {
       background: transparent;
       color: var(--text-secondary);
@@ -772,6 +777,58 @@
       align-items: center;
       color: var(--text-secondary);
       font-size: 12px;
+    }
+
+    .project-date-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .project-date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: #f3f6fb;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      font-size: 12px;
+    }
+
+    .project-date-badge strong {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .project-date-badge.target {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .project-date-badge.target strong { color: var(--primary); }
+
+    .project-task-section {
+      margin-top: 10px;
+    }
+
+    .project-task-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 10px 0 6px;
+    }
+
+    .project-task-row.overdue {
+      border: 1px solid #e53e3e;
+      background: #fff5f5;
+    }
+
+    .project-overdue-label {
+      color: #e53e3e;
+      font-weight: 700;
     }
 
     .project-board-actions {
@@ -1491,6 +1548,12 @@
             <button class="filter-btn" id="filterActive" onclick="setTaskFilter('active', this)">아직 기다리는 일</button>
             <button class="filter-btn" id="filterDone" onclick="setTaskFilter('done', this)">해낸 일</button>
           </div>
+          <div class="task-index-filter">
+            <label class="form-label" for="taskDetailFilterSelect">선택한 날 안에서 좁혀보기</label>
+            <select class="input-field" id="taskDetailFilterSelect" onchange="setTaskDetailFilter(this.value)">
+              <option value="all">전체</option>
+            </select>
+          </div>
           <div id="taskList" class="task-list">
             <p class="empty-state">아직 적힌 일이 없어. 일단 하나만 적어보자. 못생긴 시작 환영.</p>
           </div>
@@ -1694,12 +1757,12 @@
             <div class="form-row">
               <label class="form-label">영역</label>
               <select class="input-field" id="projectAreaInput">
-                <option>디자인</option>
+                <option>외주</option>
+                <option>화화작업실</option>
                 <option>커리어</option>
                 <option>학업</option>
                 <option>루틴</option>
                 <option>마음</option>
-                <option>독서</option>
                 <option>명상</option>
                 <option>기타</option>
               </select>
@@ -2254,6 +2317,7 @@
 
     var tasks = [];
     var currentTaskFilter = 'all';
+    var currentTaskDetailFilter = 'all';
     var taskSelectedDate = getDateKey(new Date());
     var taskCalendarDate = new Date();
     var taskReviewTargetId = null;
@@ -2263,6 +2327,8 @@
     var editingProjectId = null;
     var currentProjectFilter = '전체';
     var isProjectFormOpen = false;
+
+    var projectAreaOptions = ['외주', '화화작업실', '커리어', '학업', '루틴', '마음', '명상', '기타'];
 
     // 한국어 입력기(IME) 조합 상태를 기억하는 변수들.
     // 예: '명상하기'를 입력하고 Enter를 누를 때 마지막 글자 '기'가 따로 추가되는 문제를 막기 위해 사용해.
@@ -2495,8 +2561,11 @@
       task.expectedDifficulty = Number(getInputValue('taskEditExpectedDifficulty' + id, task.expectedDifficulty || 0));
       task.estimatedTime = getInputValue('taskEditEstimatedTime' + id, task.estimatedTime || '잘 모르겠음');
       task.project = getInputValue('taskEditProject' + id, task.project || '');
+      task.date = getInputValue('taskEditDate' + id, getTaskDateKey(task) || getDateKey(new Date()));
       task.updatedAt = new Date().toISOString();
 
+      taskSelectedDate = task.date;
+      taskCalendarDate = new Date(task.date + 'T00:00:00');
       editingTaskId = null;
       saveTasks();
       renderTaskPage();
@@ -2507,6 +2576,7 @@
 
     function renderTaskPage() {
       renderTaskCalendar();
+      renderTaskDetailFilterOptions();
       renderTaskList();
     }
 
@@ -2516,6 +2586,7 @@
 
       const filteredTasks = tasks.filter(task => {
         if (taskSelectedDate && getTaskDateKey(task) !== taskSelectedDate) return false;
+        if (!matchesTaskDetailFilter(task)) return false;
         if (currentTaskFilter === 'active') return !task.done;
         if (currentTaskFilter === 'done') return task.done;
         return true;
@@ -2524,7 +2595,9 @@
       updateTaskSelectedDateText(filteredTasks.length);
 
       if (filteredTasks.length === 0) {
-        const message = currentTaskFilter === 'done'
+        const message = currentTaskDetailFilter !== 'all'
+          ? '이 조건에 맞는 할 일이 없어. 필터를 전체로 돌려보자.'
+          : currentTaskFilter === 'done'
           ? '이 날짜엔 아직 해낸 일이 없어. 하나만 해도 여기 뜸.'
           : currentTaskFilter === 'active'
             ? '이 날짜엔 기다리는 일이 없어. 오? 꽤 평화로운데?'
@@ -2566,6 +2639,59 @@
       }).join('');
     }
 
+    function matchesTaskDetailFilter(task) {
+      if (!currentTaskDetailFilter || currentTaskDetailFilter === 'all') return true;
+      if (currentTaskDetailFilter.indexOf('category:') === 0) {
+        return (task.category || '기타') === currentTaskDetailFilter.slice(9);
+      }
+      if (currentTaskDetailFilter.indexOf('project:') === 0) {
+        return normalizeProjectName(task.project) === normalizeProjectName(currentTaskDetailFilter.slice(8));
+      }
+      if (currentTaskDetailFilter === 'no-project') {
+        return !String(task.project || '').trim();
+      }
+      return true;
+    }
+
+    function renderTaskDetailFilterOptions() {
+      const select = document.getElementById('taskDetailFilterSelect');
+      if (!select) return;
+      const dayTasks = tasks.filter(function(task) {
+        return !taskSelectedDate || getTaskDateKey(task) === taskSelectedDate;
+      });
+      const categories = ['사무', '디자인', '학업', '커리어', '루틴', '생활', '마음', '운동', '기타'];
+      const projectNames = Array.from(new Set(dayTasks.map(function(task) {
+        return String(task.project || '').trim();
+      }).filter(Boolean))).sort(function(a, b) { return a.localeCompare(b, 'ko'); });
+      const hasNoProject = dayTasks.some(function(task) { return !String(task.project || '').trim(); });
+
+      const availableValues = ['all']
+        .concat(categories.map(function(category) { return 'category:' + category; }))
+        .concat(projectNames.map(function(name) { return 'project:' + name; }))
+        .concat(hasNoProject ? ['no-project'] : []);
+
+      if (availableValues.indexOf(currentTaskDetailFilter) === -1) currentTaskDetailFilter = 'all';
+
+      let html = '<option value="all">전체</option>';
+      html += '<optgroup label="항목 구분">';
+      html += categories.map(function(category) {
+        const value = 'category:' + category;
+        return '<option value="' + escapeHtml(value) + '"' + (value === currentTaskDetailFilter ? ' selected' : '') + '>' + escapeHtml(category) + '</option>';
+      }).join('');
+      html += '</optgroup>';
+      html += '<optgroup label="연결 프로젝트">';
+      html += projectNames.map(function(name) {
+        const value = 'project:' + name;
+        return '<option value="' + escapeHtml(value) + '"' + (value === currentTaskDetailFilter ? ' selected' : '') + '>' + escapeHtml(name) + '</option>';
+      }).join('');
+      if (hasNoProject) {
+        html += '<option value="no-project"' + (currentTaskDetailFilter === 'no-project' ? ' selected' : '') + '>프로젝트 없음</option>';
+      }
+      html += '</optgroup>';
+      select.innerHTML = html;
+      select.value = currentTaskDetailFilter;
+    }
+
     function getTaskEditHtml(task) {
       const id = task.id;
       return '' +
@@ -2574,6 +2700,10 @@
             '<div class="form-row task-edit-full">' +
               '<label class="form-label">할 일 내용</label>' +
               '<input class="input-field" id="taskEditText' + id + '" type="text" value="' + escapeHtml(getTaskTitle(task)) + '">' +
+            '</div>' +
+            '<div class="form-row">' +
+              '<label class="form-label">날짜</label>' +
+              '<input class="input-field" id="taskEditDate' + id + '" type="date" value="' + escapeHtml(getTaskDateKey(task) || getDateKey(new Date())) + '">' +
             '</div>' +
             '<div class="form-row">' +
               '<label class="form-label">항목 구분</label>' +
@@ -2707,6 +2837,11 @@
       currentTaskFilter = filter;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
+      renderTaskList();
+    }
+
+    function setTaskDetailFilter(value) {
+      currentTaskDetailFilter = value || 'all';
       renderTaskList();
     }
 
@@ -2924,7 +3059,9 @@
 
       try {
         const parsed = JSON.parse(saved) || [];
+        const needsMigration = parsed.some(function(project) { return project && project.area === '디자인'; });
         projects = parsed.map(normalizeProject);
+        if (needsMigration) saveProjects();
       } catch (error) {
         projects = [];
         showToast('⚠️ 프로젝트를 불러오지 못했어');
@@ -2942,7 +3079,7 @@
         id: project.id || Date.now() + Math.floor(Math.random() * 1000),
         name: project.name || project.title || '',
         term: project.term || '단기',
-        area: project.area || '기타',
+        area: normalizeProjectArea(project.area),
         startDate: project.startDate || '',
         targetDate: project.targetDate || '',
         status: project.status || '진행 중',
@@ -2997,7 +3134,7 @@
       editingProjectId = null;
       setValue('projectNameInput', '');
       setValue('projectTermInput', '단기');
-      setValue('projectAreaInput', '디자인');
+      setValue('projectAreaInput', '외주');
       setValue('projectStartInput', '');
       setValue('projectTargetInput', '');
       setValue('projectStatusInput', '진행 중');
@@ -3030,7 +3167,7 @@
       toggleProjectForm(true);
       setValue('projectNameInput', project.name || '');
       setValue('projectTermInput', project.term || '단기');
-      setValue('projectAreaInput', project.area || '기타');
+      setValue('projectAreaInput', normalizeProjectArea(project.area));
       setValue('projectStartInput', project.startDate || '');
       setValue('projectTargetInput', project.targetDate || '');
       setValue('projectStatusInput', project.status || '진행 중');
@@ -3118,9 +3255,9 @@
                 '</div>' +
               '</div>' +
             '</div>' +
-            '<div class="task-info-row">' +
-              '<span class="task-badge">시작 ' + escapeHtml(project.startDate || '미정') + '</span>' +
-              '<span class="task-badge">목표 ' + escapeHtml(project.targetDate || '미정') + '</span>' +
+            '<div class="project-date-row">' +
+              '<span class="project-date-badge">시작 <strong>' + escapeHtml(project.startDate || '시작일 없음') + '</strong></span>' +
+              '<span class="project-date-badge target">목표 <strong>' + escapeHtml(project.targetDate || '목표일 없음') + '</strong></span>' +
             '</div>' +
             '<p class="project-desc">' + escapeHtml(desc) + '</p>' +
             '<div class="project-progress-row"><strong>진행률 ' + stats.percent + '%</strong><span>' + stats.done + ' / ' + stats.total + ' 완료</span></div>' +
@@ -3171,23 +3308,40 @@
 
     function getLinkedProjectTasksHtml(linkedTasks) {
       if (!linkedTasks || linkedTasks.length === 0) {
-        return '<p class="empty-state" style="padding: 18px 0;">연결된 할 일이 아직 없어.</p>';
+        return '<p class="empty-state" style="padding: 18px 0;">아직 연결된 할 일이 없어요.</p>';
       }
-      return linkedTasks.map(function(task) {
+      const leftTasks = linkedTasks.filter(function(task) { return !task.done; });
+      const doneTasks = linkedTasks.filter(function(task) { return task.done; });
+      return renderLinkedProjectTaskSection('남은 할 일', leftTasks) + renderLinkedProjectTaskSection('완료한 일', doneTasks);
+    }
+
+    function renderLinkedProjectTaskSection(title, sectionTasks) {
+      if (!sectionTasks || sectionTasks.length === 0) {
+        return '<div class="project-task-section"><div class="project-task-section-title">' + title + '</div><p class="empty-state" style="padding: 12px 0;">해당하는 할 일이 없어.</p></div>';
+      }
+      return '<div class="project-task-section"><div class="project-task-section-title">' + title + '</div>' +
+        sectionTasks.map(function(task) {
+        const overdue = isTaskOverdue(task);
         const details = [
           '날짜 ' + (getTaskDateKey(task) || '미정'),
           '항목 ' + (task.category || '기타'),
-          task.done ? '완료' : '미완료',
-          '중요도 ' + (taskImportanceLabels[task.importance || 'normal'] || '보통'),
-          '예상 난이도 ' + makeStars(task.expectedDifficulty),
-          '실행 후 난이도 ' + makeStars(task.actualDifficulty)
+          '중요도 ' + (taskImportanceLabels[task.importance || 'normal'] || '☕ 보통'),
+          '예상 시간 ' + (task.estimatedTime || '잘 모르겠음'),
+          task.done ? '완료' : '미완료'
         ];
-        return '<div class="project-task-row">' +
+        return '<div class="project-task-row' + (overdue ? ' overdue' : '') + '">' +
           '<div class="project-task-title">' + escapeHtml(getTaskTitle(task)) + '</div>' +
           '<div>' + details.map(escapeHtml).join(' · ') + '</div>' +
-          (task.completionComment ? '<div><strong>완료 코멘트</strong> ' + escapeHtml(task.completionComment) + '</div>' : '') +
+          (overdue ? '<div class="project-overdue-label">지난 날짜의 미완료 할 일이야</div>' : '') +
         '</div>';
-      }).join('');
+      }).join('') + '</div>';
+    }
+
+    function isTaskOverdue(task) {
+      if (!task || task.done) return false;
+      const dateKey = getTaskDateKey(task);
+      if (!dateKey) return false;
+      return dateKey < getDateKey(new Date());
     }
 
     function renderProjectOptions() {
@@ -3209,6 +3363,12 @@
 
     function normalizeProjectName(value) {
       return String(value || '').trim().toLowerCase();
+    }
+
+    function normalizeProjectArea(value) {
+      const area = String(value || '').trim();
+      if (area === '디자인') return '외주';
+      return projectAreaOptions.indexOf(area) !== -1 ? area : '기타';
     }
 
     function getInputValue(id, fallback) {
