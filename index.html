@@ -1137,7 +1137,7 @@
 
     .archive-form-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 180px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 12px;
     }
 
@@ -1210,6 +1210,81 @@
       gap: 8px;
       flex-wrap: wrap;
       margin-top: 12px;
+    }
+
+    .archive-tag-axis-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .archive-tag-axis-card {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .archive-tag-axis-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .archive-tag-axis-question {
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-tertiary);
+      margin-bottom: 10px;
+    }
+
+    .archive-tag-choice-wrap,
+    .archive-axis-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .archive-tag-choice {
+      border: 1px solid var(--border-color);
+      background: var(--bg-main);
+      color: var(--text-secondary);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--font-main);
+      transition: all 0.15s;
+    }
+
+    .archive-tag-choice:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .archive-tag-choice.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .archive-tag-add-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .archive-tag-add-row .input-field {
+      min-width: 0;
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+
+    .archive-tag-add-row .archive-mini-btn {
+      white-space: nowrap;
     }
 
     .archive-calendar-card { margin-bottom: 16px; }
@@ -1384,6 +1459,54 @@
       font-size: 11px;
       color: var(--text-secondary);
       background: var(--bg-main);
+    }
+
+    .archive-tag.clickable {
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      font-family: var(--font-main);
+    }
+
+    .archive-tag.clickable:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .archive-axis-tag-row {
+      display: flex;
+      gap: 7px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-top: 7px;
+      font-size: 12px;
+    }
+
+    .archive-axis-tag-label {
+      font-weight: 700;
+      color: var(--text-primary);
+      min-width: 34px;
+    }
+
+    .archive-filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .archive-filter-pill button {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      font: inherit;
+      padding: 0;
     }
 
     .archive-body-full {
@@ -1719,7 +1842,7 @@
       <div id="archivePage" class="page">
         <div class="page-header">
           <h2>🗂️ 생각 아카이브</h2>
-          <p>긴 일기, 대화 요약, 깨달음, 키워드를 차곡차곡 쌓아두는 곳</p>
+          <p>긴 일기, 대화 요약, 깨달음, 태그를 차곡차곡 쌓아두는 곳</p>
         </div>
 
         <div class="card">
@@ -1740,18 +1863,16 @@
               <input class="input-field" id="archiveTitleInput" type="text" placeholder="예: 무너짐이 있었지만 내가 무너짐 자체는 아니다">
             </div>
             <div class="form-row">
-              <label class="form-label">분류</label>
+              <label class="form-label">날짜</label>
+              <input class="input-field" id="archiveDateInput" type="date">
+            </div>
+            <div class="form-row">
+              <label class="form-label">카테고리</label>
               <select class="input-field" id="archiveCategoryInput">
-                <option>일기</option>
-                <option>대화</option>
-                <option>깨달음</option>
-                <option>실험</option>
-                <option>작업</option>
-                <option>관계</option>
-                <option>진로</option>
-                <option>마음</option>
-                <option>독서</option>
-                <option>명상</option>
+                <option>✍️ 기록</option>
+                <option>💡 통찰</option>
+                <option>📎 자료</option>
+                <option>🌱 회고</option>
               </select>
             </div>
           </div>
@@ -1790,9 +1911,9 @@
           </div>
 
           <div class="form-row">
-            <label class="form-label">키워드</label>
-            <input class="input-field" id="archiveKeywordsInput" type="text" placeholder="예: 완벽주의, 회복, 작업, 명상">
-            <p class="small-help">쉼표나 #으로 구분해도 됨. 예: #완벽주의 #회복 #몸</p>
+            <label class="form-label">해시태그 선택</label>
+            <p class="small-help">각 축마다 직접 만든 태그 창고에서 골라 붙여. 없는 태그는 여기서 바로 추가할 수 있어.</p>
+            <div class="archive-tag-axis-grid" id="archiveTagSelector"></div>
           </div>
 
           <div class="archive-actions">
@@ -1819,17 +1940,19 @@
                 <div class="archive-stat-number" id="archiveQuoteCount">0</div>
               </div>
             </div>
+            <div class="archive-stat-grid" id="archiveCategoryStats" style="margin-top:10px;"></div>
+            <div class="archive-stat-grid" id="archiveAxisStats" style="margin-top:10px;"></div>
             <p class="small-help">기록이 쌓이면 내가 자주 돌아오는 주제들이 보이기 시작함.</p>
           </div>
 
           <div class="card">
-            <h3>🍩 자주 나온 키워드 TOP5</h3>
+            <h3>🍩 태그 축 비율 · 자주 쓴 태그 TOP5</h3>
             <div class="archive-keyword-card">
               <div class="archive-donut" id="archiveKeywordDonut">
-                <div class="archive-donut-center"><strong id="archiveKeywordTopPercent">0%</strong><span>TOP 키워드</span></div>
+                <div class="archive-donut-center"><strong id="archiveKeywordTopPercent">0%</strong><span>태그 축</span></div>
               </div>
               <div class="archive-keyword-list" id="archiveKeywordList">
-                <p class="empty-state" style="padding: 18px 0;">아직 키워드가 없어.</p>
+                <p class="empty-state" style="padding: 18px 0;">아직 태그가 없어.</p>
               </div>
             </div>
           </div>
@@ -1859,20 +1982,15 @@
             </div>
           </div>
           <div class="archive-toolbar">
-            <input class="input-field" id="archiveSearchInput" type="text" placeholder="제목, 본문, 키워드 검색" oninput="setArchiveSearch(this.value)">
+            <input class="input-field" id="archiveSearchInput" type="text" placeholder="제목, 본문, 요약, 중요 문장, 태그 검색" oninput="setArchiveSearch(this.value)">
             <select class="input-field archive-select" id="archiveCategoryFilter" onchange="setArchiveCategoryFilter(this.value)">
               <option value="all">전체 분류</option>
-              <option>일기</option>
-              <option>대화</option>
-              <option>깨달음</option>
-              <option>실험</option>
-              <option>작업</option>
-              <option>관계</option>
-              <option>진로</option>
-              <option>마음</option>
-              <option>독서</option>
-              <option>명상</option>
+              <option>✍️ 기록</option>
+              <option>💡 통찰</option>
+              <option>📎 자료</option>
+              <option>🌱 회고</option>
             </select>
+            <div id="archiveTagFilterPill"></div>
           </div>
           <div class="archive-list" id="archiveList">
             <p class="empty-state">아직 기록이 없어. 첫 기록을 하나 남겨보자.</p>
@@ -2328,6 +2446,7 @@
     const HWA_DATA_KEYS = [
       'hwaTasks',
       'hwaThoughtArchive',
+      'hwaArchiveTagWarehouse',
       'hwaProjects',
       'hwaProfile',
       'hwaDesign',
@@ -2518,6 +2637,9 @@
       if (!storageData.hwaProfile && data.profileData && typeof data.profileData === 'object') {
         localStorage.setItem('hwaProfile', JSON.stringify(data.profileData));
       }
+      if (!storageData.hwaArchiveTagWarehouse && data.archiveTagWarehouse && typeof data.archiveTagWarehouse === 'object') {
+        localStorage.setItem('hwaArchiveTagWarehouse', JSON.stringify(data.archiveTagWarehouse));
+      }
 
       reloadAppDataFromStorage();
       const summary = getDataManagementSummary();
@@ -2538,6 +2660,7 @@
       renderHomeSummary();
       renderProjectPage();
       renderProjectOptions();
+      loadArchiveTagWarehouse();
       loadArchiveEntries();
       renderArchivePage();
       renderDataManagementSummary();
@@ -3303,6 +3426,10 @@
         .replaceAll("'", '&#039;');
     }
 
+    function escapeAttribute(text) {
+      return escapeHtml(text);
+    }
+
 
     // =====================================================
     // 프로젝트 보드
@@ -3711,10 +3838,118 @@
     var editingArchiveId = null;
     var archiveCategoryFilter = 'all';
     var archiveSearchText = '';
+    var archiveTagFilter = null;
     var archiveSelectedDate = null;
     var archiveCalendarDate = new Date();
+    var archiveTagWarehouse = null;
+    var archiveSelectedTagsByAxis = null;
 
-    var archiveDonutColors = ['#4f8ef7', '#8f7cf6', '#f6a64f', '#4fc3a1', '#f66f8f', '#d8dce6'];
+    var archiveCategories = ['✍️ 기록', '💡 통찰', '📎 자료', '🌱 회고'];
+    var archiveTagAxes = [
+      { key: 'relation', icon: '👥', label: '관계', question: '누구와의 관계에서 나온 생각인가?' },
+      { key: 'psychology', icon: '🧠', label: '심리', question: '내 안에서 어떤 마음이 움직였는가?' },
+      { key: 'practice', icon: '🪷', label: '수행', question: '어떻게 바라보았고 무엇을 알아차렸는가?' },
+      { key: 'growth', icon: '🌱', label: '성장', question: '그래서 나는 무엇을 배우고 변화했는가?' }
+    ];
+
+    var archiveDonutColors = ['#4f8ef7', '#8f7cf6', '#f6a64f', '#4fc3a1'];
+
+    function createEmptyArchiveTagsByAxis() {
+      const result = {};
+      archiveTagAxes.forEach(function(axis) { result[axis.key] = []; });
+      return result;
+    }
+
+    function normalizeArchiveCategory(value) {
+      const category = String(value || '').trim();
+      return archiveCategories.indexOf(category) !== -1 ? category : '✍️ 기록';
+    }
+
+    function normalizeArchiveTag(value) {
+      return String(value || '').replace(/^#+/, '').trim();
+    }
+
+    function uniqueArchiveTags(tags) {
+      const seen = {};
+      const source = Array.isArray(tags)
+        ? tags
+        : (typeof tags === 'string' || typeof tags === 'number' ? String(tags).split(/[,\n#]+/) : []);
+      return source
+        .map(normalizeArchiveTag)
+        .filter(function(tag) {
+          if (!tag || seen[tag]) return false;
+          seen[tag] = true;
+          return true;
+        });
+    }
+
+    function normalizeArchiveTagsByAxis(value) {
+      const result = createEmptyArchiveTagsByAxis();
+      const source = value && typeof value === 'object' ? value : {};
+      archiveTagAxes.forEach(function(axis) {
+        result[axis.key] = uniqueArchiveTags(source[axis.key]);
+      });
+      return result;
+    }
+
+    function normalizeArchiveTagWarehouse(value) {
+      return normalizeArchiveTagsByAxis(value);
+    }
+
+    function normalizeArchiveEntry(entry) {
+      const now = new Date().toISOString();
+      const source = entry && typeof entry === 'object' ? entry : {};
+      const originalCategory = String(source.category || '').trim();
+      const normalizedCategory = normalizeArchiveCategory(originalCategory);
+      const result = Object.assign({}, source, {
+        id: source.id || Date.now() + Math.floor(Math.random() * 1000),
+        title: source.title || '',
+        category: normalizedCategory,
+        body: source.body || '',
+        bodyHtml: source.bodyHtml || '',
+        quote: source.quote || '',
+        summary: source.summary || '',
+        keywords: uniqueArchiveTags(source.keywords),
+        tagsByAxis: normalizeArchiveTagsByAxis(source.tagsByAxis),
+        createdAt: source.createdAt || now,
+        updatedAt: source.updatedAt || source.createdAt || now
+      });
+      if (originalCategory && originalCategory !== normalizedCategory && !result.legacyCategory) {
+        result.legacyCategory = originalCategory;
+      }
+      return result;
+    }
+
+    function loadArchiveTagWarehouse() {
+      const saved = localStorage.getItem('hwaArchiveTagWarehouse');
+      if (!saved) {
+        archiveTagWarehouse = createEmptyArchiveTagsByAxis();
+        return;
+      }
+
+      try {
+        archiveTagWarehouse = normalizeArchiveTagWarehouse(JSON.parse(saved));
+      } catch (error) {
+        archiveTagWarehouse = createEmptyArchiveTagsByAxis();
+        showToast('⚠️ 해시태그 창고를 불러오지 못했어');
+      }
+    }
+
+    function saveArchiveTagWarehouse() {
+      localStorage.setItem('hwaArchiveTagWarehouse', JSON.stringify(normalizeArchiveTagWarehouse(archiveTagWarehouse)));
+    }
+
+    function mergeArchiveEntryTagsIntoWarehouse(entry) {
+      if (!archiveTagWarehouse) archiveTagWarehouse = createEmptyArchiveTagsByAxis();
+      const tagsByAxis = normalizeArchiveTagsByAxis(entry && entry.tagsByAxis);
+      archiveTagAxes.forEach(function(axis) {
+        const current = uniqueArchiveTags(archiveTagWarehouse[axis.key]);
+        tagsByAxis[axis.key].forEach(function(tag) {
+          if (current.indexOf(tag) === -1) current.push(tag);
+        });
+        archiveTagWarehouse[axis.key] = current;
+      });
+    }
 
     function loadArchiveEntries() {
       const saved = localStorage.getItem('hwaThoughtArchive');
@@ -3724,7 +3959,16 @@
       }
 
       try {
-        archiveEntries = JSON.parse(saved) || [];
+        const parsed = JSON.parse(saved) || [];
+        let changed = false;
+        archiveEntries = parsed.map(function(entry) {
+          const normalized = normalizeArchiveEntry(entry);
+          if (JSON.stringify(entry) !== JSON.stringify(normalized)) changed = true;
+          mergeArchiveEntryTagsIntoWarehouse(normalized);
+          return normalized;
+        });
+        if (changed) saveArchiveEntries();
+        saveArchiveTagWarehouse();
       } catch (error) {
         archiveEntries = [];
         showToast('⚠️ 생각 아카이브를 불러오지 못했어');
@@ -3744,6 +3988,9 @@
       panel.classList.toggle('open', next);
       if (btn) btn.textContent = next ? '글쓰기 닫기' : '+ 새 기록 쓰기';
       if (next) {
+        const dateInput = document.getElementById('archiveDateInput');
+        if (dateInput && !dateInput.value) dateInput.value = getArchiveDateKey(new Date());
+        renderArchiveTagSelector();
         setTimeout(function() {
           const title = document.getElementById('archiveTitleInput');
           const editor = document.getElementById('archiveBodyEditor');
@@ -3755,10 +4002,10 @@
 
     function saveArchiveEntry() {
       const titleInput = document.getElementById('archiveTitleInput');
+      const dateInput = document.getElementById('archiveDateInput');
       const categoryInput = document.getElementById('archiveCategoryInput');
       const quoteInput = document.getElementById('archiveQuoteInput');
       const summaryInput = document.getElementById('archiveSummaryInput');
-      const keywordsInput = document.getElementById('archiveKeywordsInput');
 
       const bodyText = getArchiveBodyText();
       const bodyHtml = getArchiveBodyHtml();
@@ -3771,15 +4018,16 @@
       }
 
       const now = new Date().toISOString();
-      const parsedKeywords = parseArchiveKeywords(keywordsInput.value);
+      const selectedDate = dateInput && dateInput.value ? dateInput.value : getArchiveDateKey(new Date());
+      const createdAtForSave = getArchiveDateInputIso(selectedDate, now);
       const entryData = {
         title: titleInput.value.trim() || makeArchiveTitleFromBody(bodyText),
-        category: categoryInput.value || '일기',
+        category: normalizeArchiveCategory(categoryInput.value),
         body: bodyText.trim(),
         bodyHtml: bodyHtml || escapeHtml(bodyText).replace(/\n/g, '<br>'),
         quote: quoteInput.value.trim(),
         summary: summaryInput.value.trim(),
-        keywords: parsedKeywords,
+        tagsByAxis: normalizeArchiveTagsByAxis(archiveSelectedTagsByAxis),
         updatedAt: now
       };
 
@@ -3787,35 +4035,41 @@
       if (editingArchiveId) {
         archiveEntries = archiveEntries.map(function(entry) {
           if (entry.id !== editingArchiveId) return entry;
-          savedDateKey = getArchiveDateKey(entry.createdAt || now);
-          return Object.assign({}, entry, entryData);
+          savedDateKey = getArchiveDateKey(createdAtForSave);
+          return normalizeArchiveEntry(Object.assign({}, entry, entryData, { createdAt: createdAtForSave }));
         });
         showToast('📝 기록을 수정했어');
       } else {
-        savedDateKey = getArchiveDateKey(now);
-        archiveEntries.unshift(Object.assign({
+        savedDateKey = getArchiveDateKey(createdAtForSave);
+        archiveEntries.unshift(normalizeArchiveEntry(Object.assign({
           id: Date.now(),
-          createdAt: now
-        }, entryData));
+          createdAt: createdAtForSave,
+          keywords: []
+        }, entryData)));
         showToast('🗂️ 생각 아카이브에 저장했어');
       }
 
+      archiveEntries.forEach(mergeArchiveEntryTagsIntoWarehouse);
       archiveSelectedDate = savedDateKey;
       archiveCalendarDate = savedDateKey ? new Date(savedDateKey + 'T00:00:00') : new Date();
+      saveArchiveTagWarehouse();
       saveArchiveEntries();
       resetArchiveForm(true);
       renderArchivePage();
     }
 
     function resetArchiveForm(closeAfter) {
-      const ids = ['archiveTitleInput', 'archiveQuoteInput', 'archiveSummaryInput', 'archiveKeywordsInput'];
+      const ids = ['archiveTitleInput', 'archiveQuoteInput', 'archiveSummaryInput'];
       ids.forEach(function(id) {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
       setArchiveBodyEditor('', true);
+      setValue('archiveDateInput', getArchiveDateKey(new Date()));
       const category = document.getElementById('archiveCategoryInput');
-      if (category) category.value = '일기';
+      if (category) category.value = '✍️ 기록';
+      archiveSelectedTagsByAxis = createEmptyArchiveTagsByAxis();
+      renderArchiveTagSelector();
       editingArchiveId = null;
       const btn = document.getElementById('archiveSaveBtn');
       if (btn) btn.textContent = '기록 저장';
@@ -3824,17 +4078,104 @@
       if (closeAfter) toggleArchiveForm(false);
     }
 
+    function renderArchiveTagSelector() {
+      const wrap = document.getElementById('archiveTagSelector');
+      if (!wrap) return;
+      if (!archiveTagWarehouse) archiveTagWarehouse = createEmptyArchiveTagsByAxis();
+      if (!archiveSelectedTagsByAxis) archiveSelectedTagsByAxis = createEmptyArchiveTagsByAxis();
+
+      wrap.innerHTML = archiveTagAxes.map(function(axis) {
+        const warehouseTags = uniqueArchiveTags(archiveTagWarehouse[axis.key]);
+        const selectedTags = uniqueArchiveTags(archiveSelectedTagsByAxis[axis.key]);
+        const tagButtons = warehouseTags.length
+          ? warehouseTags.map(function(tag) {
+              const active = selectedTags.indexOf(tag) !== -1;
+              return '<button type="button" class="archive-tag-choice' + (active ? ' active' : '') + '" onclick="toggleArchiveTagSelection(&quot;' + axis.key + '&quot;, &quot;' + escapeAttribute(tag) + '&quot;)">#' + escapeHtml(tag) + '</button>';
+            }).join('')
+          : '<p class="small-help" style="margin:0;">아직 태그가 없어. 예: #' + getArchiveAxisExample(axis.key) + '</p>';
+
+        return '<div class="archive-tag-axis-card">' +
+          '<div class="archive-tag-axis-title">' + axis.icon + ' ' + axis.label + '</div>' +
+          '<div class="archive-tag-axis-question">' + escapeHtml(axis.question) + '</div>' +
+          '<div class="archive-tag-choice-wrap">' + tagButtons + '</div>' +
+          '<div class="archive-tag-add-row">' +
+            '<input class="input-field" id="archiveTagInput_' + axis.key + '" type="text" placeholder="#태그 추가" onkeydown="handleArchiveTagInputKey(event, &quot;' + axis.key + '&quot;)">' +
+            '<button type="button" class="archive-mini-btn" onclick="addArchiveTagFromInput(&quot;' + axis.key + '&quot;)">+ 추가</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function getArchiveAxisExample(axisKey) {
+      const examples = {
+        relation: '엄마',
+        psychology: '불안',
+        practice: '알아차림',
+        growth: '회복'
+      };
+      return examples[axisKey] || '태그';
+    }
+
+    function toggleArchiveTagSelection(axisKey, tag) {
+      if (!archiveSelectedTagsByAxis) archiveSelectedTagsByAxis = createEmptyArchiveTagsByAxis();
+      const normalized = normalizeArchiveTag(tag);
+      if (!normalized) return;
+      const current = uniqueArchiveTags(archiveSelectedTagsByAxis[axisKey]);
+      const index = current.indexOf(normalized);
+      if (index === -1) current.push(normalized);
+      else current.splice(index, 1);
+      archiveSelectedTagsByAxis[axisKey] = current;
+      renderArchiveTagSelector();
+    }
+
+    function addArchiveTagFromInput(axisKey) {
+      const input = document.getElementById('archiveTagInput_' + axisKey);
+      const tag = normalizeArchiveTag(input ? input.value : '');
+      if (!tag) {
+        showToast('추가할 태그를 적어줘');
+        return;
+      }
+      if (!archiveTagWarehouse) archiveTagWarehouse = createEmptyArchiveTagsByAxis();
+      if (!archiveSelectedTagsByAxis) archiveSelectedTagsByAxis = createEmptyArchiveTagsByAxis();
+      const warehouseTags = uniqueArchiveTags(archiveTagWarehouse[axisKey]);
+      if (warehouseTags.indexOf(tag) === -1) warehouseTags.push(tag);
+      archiveTagWarehouse[axisKey] = warehouseTags;
+
+      const selectedTags = uniqueArchiveTags(archiveSelectedTagsByAxis[axisKey]);
+      if (selectedTags.indexOf(tag) === -1) selectedTags.push(tag);
+      archiveSelectedTagsByAxis[axisKey] = selectedTags;
+
+      saveArchiveTagWarehouse();
+      if (input) input.value = '';
+      renderArchiveTagSelector();
+      showToast('#' + tag + ' 태그를 창고에 넣고 선택했어');
+    }
+
+    function handleArchiveTagInputKey(event, axisKey) {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      addArchiveTagFromInput(axisKey);
+    }
+
+    function getArchiveDateInputIso(dateKey, fallbackIso) {
+      const key = String(dateKey || '').trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(key)) return key + 'T12:00:00.000';
+      return fallbackIso || new Date().toISOString();
+    }
+
     function editArchiveEntry(id) {
       const entry = archiveEntries.find(function(item) { return item.id === id; });
       if (!entry) return;
 
       editingArchiveId = id;
       setValue('archiveTitleInput', entry.title || '');
-      setValue('archiveCategoryInput', entry.category || '일기');
+      setValue('archiveDateInput', getArchiveDateKey(entry.createdAt || new Date()));
+      setValue('archiveCategoryInput', normalizeArchiveCategory(entry.category));
       setArchiveBodyEditor(getArchiveEntryBodyHtml(entry), true);
       setValue('archiveQuoteInput', entry.quote || '');
       setValue('archiveSummaryInput', entry.summary || '');
-      setValue('archiveKeywordsInput', (entry.keywords || []).join(', '));
+      archiveSelectedTagsByAxis = normalizeArchiveTagsByAxis(entry.tagsByAxis);
+      renderArchiveTagSelector();
 
       const btn = document.getElementById('archiveSaveBtn');
       if (btn) btn.textContent = '수정 저장';
@@ -3875,14 +4216,12 @@
       const titleEl = document.getElementById('archiveTitleInput');
       const quoteEl = document.getElementById('archiveQuoteInput');
       const summaryEl = document.getElementById('archiveSummaryInput');
-      const keywordsEl = document.getElementById('archiveKeywordsInput');
 
       if (titleEl && !titleEl.value.trim()) titleEl.value = makeArchiveTitleFromBody(body);
       if (quoteEl && !quoteEl.value.trim()) quoteEl.value = pickImportantArchiveSentence(body);
       if (summaryEl && !summaryEl.value.trim()) summaryEl.value = makeArchiveSummary(body);
-      if (keywordsEl && !keywordsEl.value.trim()) keywordsEl.value = extractArchiveKeywords(body).join(', ');
 
-      showToast('✨ 빈 칸 위주로 자동 채웠어. 맘에 안 들면 고치면 됨.');
+      showToast('✨ 제목, 중요 문장, 요약을 자동 채웠어. 태그는 직접 골라 붙이면 돼.');
     }
 
     function formatArchiveBody(command, value) {
@@ -4043,6 +4382,9 @@
     }
 
     function renderArchivePage() {
+      const dateInput = document.getElementById('archiveDateInput');
+      if (dateInput && !dateInput.value) dateInput.value = getArchiveDateKey(new Date());
+      renderArchiveTagSelector();
       renderArchiveDashboard();
       renderArchiveCalendar();
       renderArchiveList();
@@ -4060,34 +4402,62 @@
       setText('archiveMonthCount', monthCount);
       setText('archiveQuoteCount', quoteCount);
 
+      renderArchiveCategoryStats();
+      renderArchiveAxisStats();
       renderArchiveKeywordChart();
     }
 
+    function renderArchiveCategoryStats() {
+      const wrap = document.getElementById('archiveCategoryStats');
+      if (!wrap) return;
+      const counts = {};
+      archiveCategories.forEach(function(category) { counts[category] = 0; });
+      archiveEntries.forEach(function(entry) {
+        const category = normalizeArchiveCategory(entry.category);
+        counts[category] = (counts[category] || 0) + 1;
+      });
+      wrap.innerHTML = archiveCategories.map(function(category) {
+        return '<div class="archive-stat-card">' +
+          '<div class="archive-stat-label">' + escapeHtml(category) + '</div>' +
+          '<div class="archive-stat-number">' + (counts[category] || 0) + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function renderArchiveAxisStats() {
+      const wrap = document.getElementById('archiveAxisStats');
+      if (!wrap) return;
+      const counts = getArchiveAxisCounts();
+      wrap.innerHTML = archiveTagAxes.map(function(axis) {
+        return '<div class="archive-stat-card">' +
+          '<div class="archive-stat-label">' + axis.icon + ' ' + escapeHtml(axis.label) + '</div>' +
+          '<div class="archive-stat-number">' + (counts[axis.key] || 0) + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
     function renderArchiveKeywordChart() {
-      const counts = getArchiveKeywordCounts();
-      const rows = Object.keys(counts)
-        .sort(function(a, b) { return counts[b] - counts[a]; })
-        .map(function(keyword) { return { keyword: keyword, count: counts[keyword] }; });
-
-      const totalKeywordCount = rows.reduce(function(sum, row) { return sum + row.count; }, 0);
-      const topRows = rows.slice(0, 5);
-      const otherCount = rows.slice(5).reduce(function(sum, row) { return sum + row.count; }, 0);
-      const listRows = otherCount > 0 ? topRows.concat([{ keyword: '기타', count: otherCount }]) : topRows;
-
+      const axisCounts = getArchiveAxisCounts();
+      const totalAxisCount = archiveTagAxes.reduce(function(sum, axis) { return sum + (axisCounts[axis.key] || 0); }, 0);
+      const tagCounts = getArchiveTagCounts();
+      const topTags = Object.keys(tagCounts)
+        .sort(function(a, b) { return tagCounts[b] - tagCounts[a]; })
+        .slice(0, 5)
+        .map(function(tag) { return { tag: tag, count: tagCounts[tag] }; });
       const donut = document.getElementById('archiveKeywordDonut');
       const percentEl = document.getElementById('archiveKeywordTopPercent');
       const list = document.getElementById('archiveKeywordList');
 
-      if (!totalKeywordCount) {
+      if (!totalAxisCount) {
         if (donut) donut.style.background = 'conic-gradient(#e0e0e0 0% 100%)';
         if (percentEl) percentEl.textContent = '0%';
-        if (list) list.innerHTML = '<p class="empty-state" style="padding: 18px 0;">아직 키워드가 없어.</p>';
+        if (list) list.innerHTML = '<p class="empty-state" style="padding: 18px 0;">아직 태그가 없어.</p>';
         return;
       }
 
       let start = 0;
-      const gradientParts = listRows.map(function(row, index) {
-        const pct = row.count / totalKeywordCount * 100;
+      const gradientParts = archiveTagAxes.map(function(axis, index) {
+        const pct = (axisCounts[axis.key] || 0) / totalAxisCount * 100;
         const end = start + pct;
         const color = archiveDonutColors[index] || '#d8dce6';
         const part = color + ' ' + start.toFixed(2) + '% ' + end.toFixed(2) + '%';
@@ -4096,28 +4466,56 @@
       });
 
       if (donut) donut.style.background = 'conic-gradient(' + gradientParts.join(', ') + ')';
-      if (percentEl) percentEl.textContent = Math.round((listRows[0].count / totalKeywordCount) * 100) + '%';
+      const topAxis = archiveTagAxes.slice().sort(function(a, b) { return (axisCounts[b.key] || 0) - (axisCounts[a.key] || 0); })[0];
+      if (percentEl) percentEl.textContent = Math.round(((axisCounts[topAxis.key] || 0) / totalAxisCount) * 100) + '%';
 
       if (list) {
-        list.innerHTML = listRows.map(function(row, index) {
-          const percent = Math.round((row.count / totalKeywordCount) * 100);
+        const axisLegend = archiveTagAxes.map(function(axis, index) {
+          const percent = Math.round(((axisCounts[axis.key] || 0) / totalAxisCount) * 100);
           const color = archiveDonutColors[index] || '#d8dce6';
-          return '' +
-            '<div class="archive-keyword-row">' +
-              '<span class="archive-keyword-dot" style="background:' + color + '"></span>' +
-              '<span class="archive-keyword-name">#' + escapeHtml(row.keyword) + '</span>' +
-              '<span>' + row.count + '회 · ' + percent + '%</span>' +
-            '</div>';
+          return '<div class="archive-keyword-row">' +
+            '<span class="archive-keyword-dot" style="background:' + color + '"></span>' +
+            '<span class="archive-keyword-name">' + axis.icon + ' ' + escapeHtml(axis.label) + '</span>' +
+            '<span>' + (axisCounts[axis.key] || 0) + '개 · ' + percent + '%</span>' +
+          '</div>';
         }).join('');
+
+        const topList = topTags.length
+          ? '<div style="font-size:12px;font-weight:700;color:var(--text-primary);margin-top:8px;">자주 사용한 태그 TOP5</div>' +
+            topTags.map(function(row) {
+              return '<div class="archive-keyword-row">' +
+                '<span class="archive-keyword-dot" style="background:var(--primary)"></span>' +
+                '<span class="archive-keyword-name">#' + escapeHtml(row.tag) + '</span>' +
+                '<span>' + row.count + '회</span>' +
+              '</div>';
+            }).join('')
+          : '<p class="empty-state" style="padding: 12px 0;">아직 태그가 없어.</p>';
+
+        list.innerHTML = axisLegend + topList;
       }
     }
 
-    function getArchiveKeywordCounts() {
+    function getArchiveAxisCounts() {
+      const counts = {};
+      archiveTagAxes.forEach(function(axis) { counts[axis.key] = 0; });
+      archiveEntries.forEach(function(entry) {
+        const tagsByAxis = normalizeArchiveTagsByAxis(entry.tagsByAxis);
+        archiveTagAxes.forEach(function(axis) {
+          counts[axis.key] += tagsByAxis[axis.key].length;
+        });
+      });
+      return counts;
+    }
+
+    function getArchiveTagCounts() {
       const counts = {};
       archiveEntries.forEach(function(entry) {
-        (entry.keywords || []).forEach(function(keyword) {
-          if (!keyword) return;
-          counts[keyword] = (counts[keyword] || 0) + 1;
+        const tagsByAxis = normalizeArchiveTagsByAxis(entry.tagsByAxis);
+        archiveTagAxes.forEach(function(axis) {
+          tagsByAxis[axis.key].forEach(function(tag) {
+            if (!tag) return;
+            counts[tag] = (counts[tag] || 0) + 1;
+          });
         });
       });
       return counts;
@@ -4189,13 +4587,25 @@
       const list = document.getElementById('archiveList');
       if (!list) return;
 
+      renderArchiveTagFilterPill();
       const q = archiveSearchText.trim().toLowerCase();
       const filtered = archiveEntries.filter(function(entry) {
-        const categoryOk = archiveCategoryFilter === 'all' || entry.category === archiveCategoryFilter;
+        const categoryOk = archiveCategoryFilter === 'all' || normalizeArchiveCategory(entry.category) === archiveCategoryFilter;
         if (!categoryOk) return false;
         if (archiveSelectedDate && getArchiveDateKey(entry.createdAt) !== archiveSelectedDate) return false;
+        if (archiveTagFilter && !archiveEntryHasTag(entry, archiveTagFilter.axis, archiveTagFilter.tag)) return false;
         if (!q) return true;
-        const searchable = [entry.title, entry.category, entry.body, stripHtml(entry.bodyHtml || ''), entry.quote, entry.summary, (entry.keywords || []).join(' ')]
+        const searchable = [
+          entry.title,
+          normalizeArchiveCategory(entry.category),
+          entry.legacyCategory,
+          entry.body,
+          stripHtml(entry.bodyHtml || ''),
+          entry.quote,
+          entry.summary,
+          getAllArchiveTags(entry).join(' '),
+          (entry.keywords || []).join(' ')
+        ]
           .join(' ')
           .toLowerCase();
         return searchable.indexOf(q) !== -1;
@@ -4209,8 +4619,9 @@
       }
 
       list.innerHTML = filtered.map(function(entry) {
-        const keywords = (entry.keywords || []).map(function(keyword) {
-          return '<span class="archive-tag">#' + escapeHtml(keyword) + '</span>';
+        const axisTags = renderArchiveEntryAxisTags(entry);
+        const legacyKeywords = (entry.keywords || []).map(function(keyword) {
+          return '<span class="archive-tag legacy">#' + escapeHtml(keyword) + '</span>';
         }).join('');
         const bodyId = 'archiveBody' + entry.id;
         const bodyHtml = getArchiveEntryBodyHtml(entry);
@@ -4221,11 +4632,12 @@
                 '<div class="archive-entry-title">' + escapeHtml(entry.title || '제목 없는 기록') + '</div>' +
                 '<div class="archive-entry-meta">' + formatArchiveDate(entry.createdAt) + '</div>' +
               '</div>' +
-              '<span class="archive-category-badge">' + escapeHtml(entry.category || '일기') + '</span>' +
+              '<span class="archive-category-badge">' + escapeHtml(normalizeArchiveCategory(entry.category)) + '</span>' +
             '</div>' +
             (entry.quote ? '<div class="archive-quote">“' + escapeHtml(entry.quote) + '”</div>' : '') +
             (entry.summary ? '<div class="archive-summary">' + escapeHtml(entry.summary) + '</div>' : '<div class="archive-summary">' + escapeHtml(truncateText(entry.body || stripHtml(bodyHtml) || '', 120)) + '</div>') +
-            (keywords ? '<div class="archive-tags">' + keywords + '</div>' : '') +
+            (axisTags ? '<div class="archive-axis-tags">' + axisTags + '</div>' : '') +
+            (legacyKeywords ? '<div class="archive-axis-tag-row"><span class="archive-axis-tag-label">이전 키워드</span><div class="archive-tags">' + legacyKeywords + '</div></div>' : '') +
             '<div class="archive-body-full" id="' + bodyId + '">' + bodyHtml + '</div>' +
             '<div class="archive-card-actions">' +
               '<button class="archive-mini-btn" onclick="toggleArchiveBody(\'' + bodyId + '\', this)">본문 보기</button>' +
@@ -4234,6 +4646,67 @@
             '</div>' +
           '</div>';
       }).join('');
+    }
+
+    function renderArchiveEntryAxisTags(entry) {
+      const tagsByAxis = normalizeArchiveTagsByAxis(entry && entry.tagsByAxis);
+      return archiveTagAxes.map(function(axis) {
+        const tags = tagsByAxis[axis.key] || [];
+        if (!tags.length) return '';
+        const tagHtml = tags.map(function(tag) {
+          return '<button type="button" class="archive-tag clickable" onclick="setArchiveTagFilter(&quot;' + axis.key + '&quot;, &quot;' + escapeAttribute(tag) + '&quot;)">#' + escapeHtml(tag) + '</button>';
+        }).join('');
+        return '<div class="archive-axis-tag-row">' +
+          '<span class="archive-axis-tag-label">' + axis.icon + '</span>' +
+          '<div class="archive-tags">' + tagHtml + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function archiveEntryHasTag(entry, axisKey, tag) {
+      const cleanTag = normalizeArchiveTag(tag);
+      if (!cleanTag) return true;
+      const tagsByAxis = normalizeArchiveTagsByAxis(entry && entry.tagsByAxis);
+      if (axisKey && tagsByAxis[axisKey]) {
+        return tagsByAxis[axisKey].indexOf(cleanTag) !== -1;
+      }
+      return archiveTagAxes.some(function(axis) {
+        return tagsByAxis[axis.key].indexOf(cleanTag) !== -1;
+      });
+    }
+
+    function getAllArchiveTags(entry) {
+      const tagsByAxis = normalizeArchiveTagsByAxis(entry && entry.tagsByAxis);
+      const tags = [];
+      archiveTagAxes.forEach(function(axis) {
+        tagsByAxis[axis.key].forEach(function(tag) { tags.push(tag); });
+      });
+      return uniqueArchiveTags(tags);
+    }
+
+    function setArchiveTagFilter(axisKey, tag) {
+      const cleanTag = normalizeArchiveTag(tag);
+      if (!cleanTag) return;
+      archiveTagFilter = { axis: axisKey || '', tag: cleanTag };
+      renderArchiveList();
+    }
+
+    function clearArchiveTagFilter() {
+      archiveTagFilter = null;
+      renderArchiveList();
+    }
+
+    function renderArchiveTagFilterPill() {
+      const wrap = document.getElementById('archiveTagFilterPill');
+      if (!wrap) return;
+      if (!archiveTagFilter || !archiveTagFilter.tag) {
+        wrap.innerHTML = '';
+        return;
+      }
+      const axis = archiveTagAxes.find(function(item) { return item.key === archiveTagFilter.axis; });
+      const label = (axis ? axis.icon + ' ' : '') + '#' + archiveTagFilter.tag;
+      wrap.innerHTML = '<span class="archive-filter-pill">태그 필터: ' + escapeHtml(label) +
+        '<button type="button" onclick="clearArchiveTagFilter()" aria-label="태그 필터 해제">×</button></span>';
     }
 
     function updateArchiveListHeader(count) {
@@ -4340,6 +4813,7 @@
       renderHomeSummary();
       renderProjectPage();
       renderProjectOptions();
+      loadArchiveTagWarehouse();
       loadArchiveEntries();
       renderArchivePage();
       renderDataManagementSummary();
