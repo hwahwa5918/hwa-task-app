@@ -1025,11 +1025,28 @@
       gap: 10px;
     }
 
+    .archive-core-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
     .archive-stat-card {
       background: var(--bg-main);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 13px;
+    }
+
+    .archive-stat-card.core {
+      background: linear-gradient(135deg, var(--primary-light), #fff);
+      border-color: rgba(79, 142, 247, 0.24);
+      padding: 16px;
+      min-height: 104px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .archive-stat-label {
@@ -1043,6 +1060,55 @@
       font-weight: 700;
       color: var(--text-primary);
       line-height: 1.2;
+    }
+
+    .archive-stat-card.core .archive-stat-number {
+      font-size: 32px;
+    }
+
+    .archive-detail-stat-wrap {
+      display: grid;
+      gap: 10px;
+    }
+
+    .archive-detail-stat-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 2px 0 0;
+    }
+
+    .archive-mini-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .archive-mini-stat {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      border: 1px solid var(--border-color);
+      border-radius: 9px;
+      background: var(--bg-main);
+      padding: 7px 8px;
+      min-width: 0;
+    }
+
+    .archive-mini-stat-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .archive-mini-stat-number {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
     }
 
     .archive-keyword-card {
@@ -1509,29 +1575,6 @@
       padding: 0;
     }
 
-    .archive-body-full {
-      display: none;
-      margin-top: 12px;
-      padding: 14px;
-      border-radius: 10px;
-      background: var(--bg-main);
-      color: var(--text-secondary);
-      font-size: 13px;
-      line-height: 1.8;
-      word-break: break-word;
-    }
-
-    .archive-body-full h2 { font-size: 19px; color: var(--text-primary); margin: 10px 0 8px; }
-    .archive-body-full h3 { font-size: 16px; color: var(--text-primary); margin: 10px 0 6px; }
-    .archive-body-full ul, .archive-body-full ol { padding-left: 22px; margin: 8px 0; }
-    .archive-body-full blockquote {
-      border-left: 3px solid var(--primary);
-      background: #fff;
-      border-radius: 0 8px 8px 0;
-      padding: 8px 12px;
-      margin: 10px 0;
-    }
-
     .archive-card-actions {
       display: flex;
       gap: 6px;
@@ -1554,17 +1597,186 @@
     .archive-mini-btn:hover { background: var(--bg-main); }
     .archive-mini-btn.danger { color: #e53e3e; border-color: #f2b8b8; }
 
+    .archive-detail-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      background: rgba(20, 24, 32, 0.54);
+      padding: 28px;
+      overflow-y: auto;
+    }
+
+    .archive-detail-overlay.open {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #archiveDetailModalContent {
+      width: min(960px, 100%);
+    }
+
+    .archive-detail-modal {
+      width: 100%;
+      max-height: min(86vh, 920px);
+      background: #fff;
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 18px;
+      box-shadow: 0 28px 80px rgba(15, 23, 42, 0.28);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .archive-detail-head {
+      padding: 26px 30px 18px;
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+      background: linear-gradient(180deg, #fff, var(--bg-main));
+    }
+
+    .archive-detail-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      background: #fff;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .archive-detail-close:hover { background: var(--bg-main); color: var(--text-primary); }
+
+    .archive-detail-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-right: 42px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .archive-detail-title {
+      font-size: 25px;
+      line-height: 1.35;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0 0 14px;
+      padding-right: 42px;
+      word-break: keep-all;
+    }
+
+    .archive-detail-tags {
+      display: grid;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .archive-detail-scroll {
+      padding: 26px 30px;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    .archive-detail-quote {
+      border-left: 4px solid var(--primary);
+      background: var(--primary-light);
+      border-radius: 0 12px 12px 0;
+      padding: 14px 16px;
+      color: var(--text-primary);
+      font-size: 15px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      margin-bottom: 20px;
+    }
+
+    .archive-detail-body {
+      color: var(--text-primary);
+      font-size: 16px;
+      line-height: 2;
+      word-break: break-word;
+    }
+
+    .archive-detail-body p,
+    .archive-detail-body div {
+      margin: 0 0 1em;
+    }
+
+    .archive-detail-body h2 { font-size: 22px; margin: 1.25em 0 0.55em; line-height: 1.45; }
+    .archive-detail-body h3 { font-size: 18px; margin: 1.1em 0 0.45em; line-height: 1.45; }
+    .archive-detail-body ul,
+    .archive-detail-body ol { padding-left: 26px; margin: 0.75em 0 1em; }
+    .archive-detail-body li { margin: 0.25em 0; }
+    .archive-detail-body blockquote {
+      border-left: 4px solid var(--border-color);
+      background: var(--bg-main);
+      border-radius: 0 10px 10px 0;
+      padding: 12px 16px;
+      margin: 1em 0;
+      color: var(--text-secondary);
+    }
+
+    .archive-detail-summary-box {
+      margin-top: 24px;
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: var(--bg-main);
+    }
+
+    .archive-detail-summary-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .archive-detail-summary-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .archive-detail-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 16px 30px 22px;
+      border-top: 1px solid var(--border-color);
+      background: #fff;
+    }
+
+    body.archive-modal-open { overflow: hidden; }
+
     @media (max-width: 900px) {
       .archive-dashboard { grid-template-columns: 1fr; }
       .archive-keyword-card { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 768px) {
-      .archive-stat-grid { grid-template-columns: 1fr; }
+      .archive-core-stat-grid { grid-template-columns: 1fr; }
+      .archive-mini-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .archive-form-grid { grid-template-columns: 1fr; }
       .archive-entry-top { flex-direction: column; }
       .archive-calendar-cell { min-height: 48px; padding: 5px; }
       .archive-list { grid-template-columns: 1fr; }
+      .archive-detail-overlay { padding: 12px; align-items: stretch; }
+      .archive-detail-modal { max-height: calc(100vh - 24px); border-radius: 14px; }
+      .archive-detail-head { padding: 22px 18px 14px; }
+      .archive-detail-scroll { padding: 20px 18px; }
+      .archive-detail-actions { padding: 14px 18px 18px; }
+      .archive-detail-title { font-size: 21px; padding-right: 36px; }
+      .archive-detail-body { font-size: 15px; line-height: 1.9; }
     }
 
     /* ===================================================
@@ -1926,22 +2138,30 @@
         <div class="archive-dashboard">
           <div class="card">
             <h3>📌 요약 보드</h3>
-            <div class="archive-stat-grid">
-              <div class="archive-stat-card">
+            <div class="archive-core-stat-grid">
+              <div class="archive-stat-card core">
                 <div class="archive-stat-label">전체 기록</div>
                 <div class="archive-stat-number" id="archiveTotalCount">0</div>
               </div>
-              <div class="archive-stat-card">
+              <div class="archive-stat-card core">
                 <div class="archive-stat-label">이번 달 기록</div>
                 <div class="archive-stat-number" id="archiveMonthCount">0</div>
               </div>
-              <div class="archive-stat-card">
+              <div class="archive-stat-card core">
                 <div class="archive-stat-label">모은 문장 수</div>
                 <div class="archive-stat-number" id="archiveQuoteCount">0</div>
               </div>
             </div>
-            <div class="archive-stat-grid" id="archiveCategoryStats" style="margin-top:10px;"></div>
-            <div class="archive-stat-grid" id="archiveAxisStats" style="margin-top:10px;"></div>
+            <div class="archive-detail-stat-wrap">
+              <div>
+                <div class="archive-detail-stat-title">카테고리</div>
+                <div class="archive-mini-stat-grid" id="archiveCategoryStats"></div>
+              </div>
+              <div>
+                <div class="archive-detail-stat-title">태그 축</div>
+                <div class="archive-mini-stat-grid" id="archiveAxisStats"></div>
+              </div>
+            </div>
             <p class="small-help">기록이 쌓이면 내가 자주 돌아오는 주제들이 보이기 시작함.</p>
           </div>
 
@@ -2265,6 +2485,11 @@
         <button class="btn-primary" onclick="saveTaskCompletionReview()">완료 기록 저장</button>
       </div>
     </div>
+  </div>
+
+  <!-- 생각 아카이브 상세 보기 모달 -->
+  <div class="archive-detail-overlay" id="archiveDetailModal" onclick="closeArchiveDetailModal()">
+    <div id="archiveDetailModalContent"></div>
   </div>
 
   <!-- 토스트 -->
@@ -4417,9 +4642,9 @@
         counts[category] = (counts[category] || 0) + 1;
       });
       wrap.innerHTML = archiveCategories.map(function(category) {
-        return '<div class="archive-stat-card">' +
-          '<div class="archive-stat-label">' + escapeHtml(category) + '</div>' +
-          '<div class="archive-stat-number">' + (counts[category] || 0) + '</div>' +
+        return '<div class="archive-mini-stat">' +
+          '<span class="archive-mini-stat-label">' + escapeHtml(category) + '</span>' +
+          '<span class="archive-mini-stat-number">' + (counts[category] || 0) + '</span>' +
         '</div>';
       }).join('');
     }
@@ -4429,9 +4654,9 @@
       if (!wrap) return;
       const counts = getArchiveAxisCounts();
       wrap.innerHTML = archiveTagAxes.map(function(axis) {
-        return '<div class="archive-stat-card">' +
-          '<div class="archive-stat-label">' + axis.icon + ' ' + escapeHtml(axis.label) + '</div>' +
-          '<div class="archive-stat-number">' + (counts[axis.key] || 0) + '</div>' +
+        return '<div class="archive-mini-stat">' +
+          '<span class="archive-mini-stat-label">' + axis.icon + ' ' + escapeHtml(axis.label) + '</span>' +
+          '<span class="archive-mini-stat-number">' + (counts[axis.key] || 0) + '</span>' +
         '</div>';
       }).join('');
     }
@@ -4623,7 +4848,6 @@
         const legacyKeywords = (entry.keywords || []).map(function(keyword) {
           return '<span class="archive-tag legacy">#' + escapeHtml(keyword) + '</span>';
         }).join('');
-        const bodyId = 'archiveBody' + entry.id;
         const bodyHtml = getArchiveEntryBodyHtml(entry);
         return '' +
           '<div class="archive-entry-card">' +
@@ -4638,9 +4862,8 @@
             (entry.summary ? '<div class="archive-summary">' + escapeHtml(entry.summary) + '</div>' : '<div class="archive-summary">' + escapeHtml(truncateText(entry.body || stripHtml(bodyHtml) || '', 120)) + '</div>') +
             (axisTags ? '<div class="archive-axis-tags">' + axisTags + '</div>' : '') +
             (legacyKeywords ? '<div class="archive-axis-tag-row"><span class="archive-axis-tag-label">이전 키워드</span><div class="archive-tags">' + legacyKeywords + '</div></div>' : '') +
-            '<div class="archive-body-full" id="' + bodyId + '">' + bodyHtml + '</div>' +
             '<div class="archive-card-actions">' +
-              '<button class="archive-mini-btn" onclick="toggleArchiveBody(\'' + bodyId + '\', this)">본문 보기</button>' +
+              '<button class="archive-mini-btn" onclick="openArchiveDetailModal(' + entry.id + ')">본문 보기</button>' +
               '<button class="archive-mini-btn" onclick="editArchiveEntry(' + entry.id + ')">수정</button>' +
               '<button class="archive-mini-btn danger" onclick="deleteArchiveEntry(' + entry.id + ')">삭제</button>' +
             '</div>' +
@@ -4648,12 +4871,14 @@
       }).join('');
     }
 
-    function renderArchiveEntryAxisTags(entry) {
+    function renderArchiveEntryAxisTags(entry, clickable) {
+      const canClick = clickable !== false;
       const tagsByAxis = normalizeArchiveTagsByAxis(entry && entry.tagsByAxis);
       return archiveTagAxes.map(function(axis) {
         const tags = tagsByAxis[axis.key] || [];
         if (!tags.length) return '';
         const tagHtml = tags.map(function(tag) {
+          if (!canClick) return '<span class="archive-tag">#' + escapeHtml(tag) + '</span>';
           return '<button type="button" class="archive-tag clickable" onclick="setArchiveTagFilter(&quot;' + axis.key + '&quot;, &quot;' + escapeAttribute(tag) + '&quot;)">#' + escapeHtml(tag) + '</button>';
         }).join('');
         return '<div class="archive-axis-tag-row">' +
@@ -4735,13 +4960,84 @@
       return div.innerText || div.textContent || '';
     }
 
-    function toggleArchiveBody(bodyId, btn) {
-      const body = document.getElementById(bodyId);
-      if (!body) return;
-      const isOpen = body.style.display === 'block';
-      body.style.display = isOpen ? 'none' : 'block';
-      if (btn) btn.textContent = isOpen ? '본문 보기' : '본문 접기';
+    function openArchiveDetailModal(id) {
+      const entry = archiveEntries.find(function(item) { return item.id === id; });
+      const modal = document.getElementById('archiveDetailModal');
+      const content = document.getElementById('archiveDetailModalContent');
+      if (!entry || !modal || !content) return;
+
+      const bodyHtml = getArchiveEntryBodyHtml(entry);
+      const tagsHtml = renderArchiveDetailTags(entry);
+      const quoteHtml = entry.quote
+        ? '<div class="archive-detail-quote">“' + escapeHtml(entry.quote) + '”</div>'
+        : '';
+      const summaryHtml = entry.summary
+        ? '<div class="archive-detail-summary-box">' +
+            '<div class="archive-detail-summary-title">요약</div>' +
+            '<div class="archive-detail-summary-text">' + escapeHtml(entry.summary) + '</div>' +
+          '</div>'
+        : '';
+
+      content.innerHTML = '' +
+        '<article class="archive-detail-modal" role="dialog" aria-modal="true" aria-labelledby="archiveDetailTitle" onclick="event.stopPropagation()">' +
+          '<div class="archive-detail-head">' +
+            '<button type="button" class="archive-detail-close" onclick="closeArchiveDetailModal()" aria-label="상세 보기 닫기">×</button>' +
+            '<div class="archive-detail-meta-row">' +
+              '<span>' + formatArchiveDate(entry.createdAt) + '</span>' +
+              '<span class="archive-category-badge">' + escapeHtml(normalizeArchiveCategory(entry.category)) + '</span>' +
+            '</div>' +
+            '<h2 class="archive-detail-title" id="archiveDetailTitle">' + escapeHtml(entry.title || '제목 없는 기록') + '</h2>' +
+            (tagsHtml ? '<div class="archive-detail-tags">' + tagsHtml + '</div>' : '') +
+          '</div>' +
+          '<div class="archive-detail-scroll">' +
+            quoteHtml +
+            '<div class="archive-detail-body">' + bodyHtml + '</div>' +
+            summaryHtml +
+          '</div>' +
+          '<div class="archive-detail-actions">' +
+            '<button type="button" class="archive-mini-btn" onclick="editArchiveEntryFromModal(' + entry.id + ')">수정</button>' +
+            '<button type="button" class="archive-mini-btn danger" onclick="deleteArchiveEntryFromModal(' + entry.id + ')">삭제</button>' +
+            '<button type="button" class="archive-mini-btn" onclick="closeArchiveDetailModal()">닫기</button>' +
+          '</div>' +
+        '</article>';
+
+      modal.classList.add('open');
+      document.body.classList.add('archive-modal-open');
+      const closeBtn = modal.querySelector('.archive-detail-close');
+      if (closeBtn) closeBtn.focus();
     }
+
+    function renderArchiveDetailTags(entry) {
+      const axisTags = renderArchiveEntryAxisTags(entry, false);
+      const legacyKeywords = (entry.keywords || []).map(function(keyword) {
+        return '<span class="archive-tag legacy">#' + escapeHtml(keyword) + '</span>';
+      }).join('');
+      return axisTags + (legacyKeywords ? '<div class="archive-axis-tag-row"><span class="archive-axis-tag-label">이전 키워드</span><div class="archive-tags">' + legacyKeywords + '</div></div>' : '');
+    }
+
+    function closeArchiveDetailModal() {
+      const modal = document.getElementById('archiveDetailModal');
+      const content = document.getElementById('archiveDetailModalContent');
+      if (modal) modal.classList.remove('open');
+      if (content) content.innerHTML = '';
+      document.body.classList.remove('archive-modal-open');
+    }
+
+    function editArchiveEntryFromModal(id) {
+      closeArchiveDetailModal();
+      editArchiveEntry(id);
+    }
+
+    function deleteArchiveEntryFromModal(id) {
+      closeArchiveDetailModal();
+      deleteArchiveEntry(id);
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key !== 'Escape') return;
+      const modal = document.getElementById('archiveDetailModal');
+      if (modal && modal.classList.contains('open')) closeArchiveDetailModal();
+    });
 
     function setArchiveSearch(value) {
       archiveSearchText = value || '';
